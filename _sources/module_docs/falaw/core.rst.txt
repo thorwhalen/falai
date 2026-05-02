@@ -1,0 +1,4 @@
+falaw.core
+==========
+.. automodule:: falaw.core
+   :members:

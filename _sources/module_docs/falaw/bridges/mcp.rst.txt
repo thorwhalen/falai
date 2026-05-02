@@ -1,0 +1,4 @@
+falaw.bridges.mcp
+=================
+.. automodule:: falaw.bridges.mcp
+   :members:

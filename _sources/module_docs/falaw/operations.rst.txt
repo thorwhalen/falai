@@ -1,0 +1,4 @@
+falaw.operations
+================
+.. automodule:: falaw.operations
+   :members:

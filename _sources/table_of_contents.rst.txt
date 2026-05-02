@@ -1,0 +1,20 @@
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   module_docs/falaw
+   module_docs/falaw/__main__
+   module_docs/falaw/base
+   module_docs/falaw/bridges
+   module_docs/falaw/bridges/mcp
+   module_docs/falaw/bridges/service
+   module_docs/falaw/bridges/skill
+   module_docs/falaw/core
+   module_docs/falaw/journal
+   module_docs/falaw/operations
+   module_docs/falaw/operations/audio
+   module_docs/falaw/operations/images
+   module_docs/falaw/refresh
+   module_docs/falaw/registry
+   module_docs/falaw/results
+   module_docs/falaw/session

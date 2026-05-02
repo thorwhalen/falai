@@ -1,0 +1,4 @@
+falaw.__main__
+==============
+.. automodule:: falaw.__main__
+   :members:
