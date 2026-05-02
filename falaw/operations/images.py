@@ -80,8 +80,11 @@ def generate_image(
     output_schema={"type": "object", "description": "falaw.Result"},
     examples=(
         {"image_url": "https://...", "prompt": "make the sky orange"},
-        {"image_url": "https://...", "prompt": "remove the person on the left",
-         "quality": "ultra"},
+        {
+            "image_url": "https://...",
+            "prompt": "remove the person on the left",
+            "quality": "ultra",
+        },
     ),
 )
 def edit_image(
@@ -120,8 +123,7 @@ def edit_image(
     output_schema={"type": "object", "description": "falaw.Result"},
     examples=(
         {"image_url": "https://...", "scale": 2.0},
-        {"image_url": "https://...", "scale": 4.0,
-         "extra": {"creativity": 0.35}},
+        {"image_url": "https://...", "scale": 4.0, "extra": {"creativity": 0.35}},
     ),
 )
 def upscale_image(
@@ -161,9 +163,7 @@ def upscale_image(
         },
     },
     output_schema={"type": "object", "description": "falaw.Result"},
-    examples=(
-        {"image_url": "https://example.com/photo.jpg"},
-    ),
+    examples=({"image_url": "https://example.com/photo.jpg"},),
 )
 def remove_background(
     image_url: str,
@@ -174,8 +174,7 @@ def remove_background(
 ) -> Result:
     """Remove the background from an image."""
     model = (
-        model_id
-        or pick_model(category="background_removal", quality_tier=quality).id
+        model_id or pick_model(category="background_removal", quality_tier=quality).id
     )
     arguments = {"image_url": image_url, **(extra or {})}
     raw = call_fal(model, arguments)

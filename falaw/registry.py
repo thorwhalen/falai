@@ -124,7 +124,5 @@ def pick_model(
                     if near is not None:
                         return near
     if not candidates:
-        raise KeyError(
-            f"No models known for category={category!r}. Try list_models()."
-        )
+        raise KeyError(f"No models known for category={category!r}. Try list_models().")
     return candidates[0]

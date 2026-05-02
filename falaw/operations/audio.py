@@ -79,8 +79,10 @@ def text_to_speech(
     },
     output_schema={"type": "object", "description": "falaw.Result"},
     examples=(
-        {"reference_audio_url": "https://example.com/me.wav",
-         "text": "Hello, this is in my voice."},
+        {
+            "reference_audio_url": "https://example.com/me.wav",
+            "text": "Hello, this is in my voice.",
+        },
     ),
 )
 def voice_clone(

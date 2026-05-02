@@ -120,7 +120,9 @@ def extract_models_from_corpus(path: str) -> Iterator[dict]:
             yield {
                 "id": parsed["id"],
                 "category": cat,
-                "description": parsed["purpose"] or parsed["features"] or parsed["name"],
+                "description": parsed["purpose"]
+                or parsed["features"]
+                or parsed["name"],
                 "aliases": [],
                 "quality_tier": _infer_tier(parsed["name"]),
                 "cost_hint": "",
@@ -130,9 +132,7 @@ def extract_models_from_corpus(path: str) -> Iterator[dict]:
 
 def _default_corpus_path() -> str:
     here = os.path.dirname(os.path.abspath(__file__))
-    return os.path.normpath(
-        os.path.join(here, "..", "misc", "docs", "llms-full.txt")
-    )
+    return os.path.normpath(os.path.join(here, "..", "misc", "docs", "llms-full.txt"))
 
 
 @register_tool(

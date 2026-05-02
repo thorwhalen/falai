@@ -39,9 +39,7 @@ from .audio import text_to_speech
         },
     },
     output_schema={"type": "object", "description": "falaw.Result"},
-    examples=(
-        {"image_url": "https://...", "audio_url": "https://..."},
-    ),
+    examples=({"image_url": "https://...", "audio_url": "https://..."},),
 )
 def lipsync(
     image_url: str,
@@ -80,8 +78,7 @@ def lipsync(
     },
     output_schema={"type": "object", "description": "falaw.Result (the lipsync video)"},
     examples=(
-        {"text": "Welcome to the demo.",
-         "image_url": "https://example.com/host.jpg"},
+        {"text": "Welcome to the demo.", "image_url": "https://example.com/host.jpg"},
     ),
 )
 def talking_avatar_from_text(

@@ -46,9 +46,7 @@ def text_to_video(
     extra: Optional[dict] = None,
 ) -> Result:
     """Generate a video from a text prompt."""
-    model = (
-        model_id or pick_model(category="text_to_video", quality_tier=quality).id
-    )
+    model = model_id or pick_model(category="text_to_video", quality_tier=quality).id
     arguments = {"prompt": prompt, **(extra or {})}
     raw = call_fal(model, arguments)
     return parse_response(raw, application=model, arguments=arguments)
@@ -92,9 +90,7 @@ def image_to_video(
     extra: Optional[dict] = None,
 ) -> Result:
     """Animate a still image into a video."""
-    model = (
-        model_id or pick_model(category="image_to_video", quality_tier=quality).id
-    )
+    model = model_id or pick_model(category="image_to_video", quality_tier=quality).id
     arguments: dict = {"image_url": image_url, **(extra or {})}
     if prompt:
         arguments["prompt"] = prompt
