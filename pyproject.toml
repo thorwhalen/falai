@@ -21,9 +21,6 @@ dependencies = [
 [tool.hatch.build.targets.wheel]
 packages = ["falaw"]
 
-[tool.hatch.build.targets.wheel.force-include]
-"falaw/data" = "falaw/data"
-
 [project.license]
 text = "mit"
 
