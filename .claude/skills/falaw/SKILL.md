@@ -3,19 +3,113 @@ name: falaw
 description: >-
   Generate and manage AI media (images, video, audio) via fal.ai. Use this
   skill whenever the user wants to generate, edit, upscale, or compose media,
-  or asks about fal.ai or fal-client. The skill exposes Python tools that
-  wrap fal-client with smart model selection, result handling, and a journal
-  for self-improvement across sessions.
+  or asks about fal.ai or fal-client. Also use it for *directorial* workflows:
+  the user defines a Scene as data (characters, beats, shots) and falaw renders
+  it with caching, so a single edit re-renders only what changed.
 ---
 
 # falaw
 
-Use the `falaw` Python package as your primary interface to fal.ai.
+Two ways to use `falaw`:
+
+1. **Single-shot operations** --- `generate_image`, `text_to_speech`, etc. for
+   one-off media generation.
+2. **Directorial workflow** --- author a Scene as data, render it, give notes
+   that re-edit the Scene, re-render only the affected beats. This is the path
+   to *direct* a film instead of just *generate* clips.
+
+## Directorial workflow (when the user wants to "plan, parametrize, render")
+
+The thesis: keep the film in *editable structure* all the way down to the
+pixels. The creator authors a Scene as data; a directorial note becomes a
+single IR edit; the renderer caches everything content-addressed so unchanged
+beats don't re-render.
+
+### Phase 1: Plan (LLM-assisted or hand-built)
+
+```python
+from falaw import parse_screenplay, Scene, Character, Environment, make_beat, make_shot
+
+# Option A: feed prose / treatment text and let any-llm draft the structure.
+scene = parse_screenplay(prose_text, title="Diner Encounter",
+                         style="Wes-Anderson pastel")
+
+# Option B: build the Scene directly.
+scene = Scene(
+    title="Diner Encounter",
+    style="Wes-Anderson symmetrical pastel",
+    characters=(Character(name="Sarah", description="mid-30s, dark curly hair"),),
+    environments=(Environment(name="diner", description="1950s chrome diner",
+                              time_of_day="midnight"),),
+    shots=(make_shot("two-shot at the booth", framing="medium",
+                     environment="diner", characters=("Sarah", "Tom"), index=0),),
+    beats=(
+        make_beat("Sarah", "Why are you here?",
+                  shot_id="...", emotion="wary", index=0),
+        make_beat("Tom", "I came to apologize.", index=1),
+    ),
+)
+```
+
+### Phase 2: Parametrize (set identity anchors)
+
+Cast each character with a *canonical* face and voice. These anchors get
+reused for every shot/beat that character appears in --- this is what gives
+identity continuity.
+
+```python
+from falaw import cast_character, establish_environment
+
+sarah = cast_character("Sarah", "mid-30s, dark curly hair, wary eyes",
+                       reference_audio_url="https://.../sarah_sample.wav")
+diner = establish_environment("diner",
+                              "1950s chrome diner, neon outside, half-empty booths",
+                              time_of_day="midnight", lighting="cool fluorescents")
+scene = scene.with_character(sarah).with_environment(diner)
+```
+
+### Phase 3: Render (caches; re-edits are cheap)
+
+```python
+from falaw import render_scene, save_scene
+
+manifest = render_scene(scene)             # all beats + shots
+save_scene(scene, "out/diner_v1.json")     # snapshot the IR alongside
+```
+
+### Phase 4: Direct (notes -> IR edits -> re-render)
+
+```python
+from falaw import apply_note_to_beat
+
+# Pick the beat to direct.
+beat = scene.beat("002-tom-...")
+edited = apply_note_to_beat(beat, "He cracks on this line; tries to hide it.")
+scene2 = scene.with_beat(edited)
+manifest2 = render_scene(scene2)   # only the edited beat re-renders;
+                                   # the rest are cache hits.
+```
+
+For cross-cutting notes like "tighten the pacing", use
+`apply_note_to_scene(scene, note)`. For non-LLM edits, just construct the
+new dataclass yourself --- everything is frozen so `dataclasses.replace`
+works.
+
+### Local stitching
+
+`falaw.local` (requires ffmpeg) stitches the per-beat lipsynced clips into
+a watchable scene:
+
+```python
+from falaw.local import concatenate_clips
+concatenate_clips([m["url"] for m in manifest["beats"]],
+                  output_path="out/scene.mp4", transition_s=0.2)
+```
 
 ## Read the journal first
 
-Before doing anything novel, glance at recent journal entries --- past
-sessions may have left notes, gotchas, or suggestions that save you time:
+Before novel work, glance at recent entries --- past sessions may have
+left notes that save you time:
 
 ```python
 from falaw import journal
@@ -25,30 +119,26 @@ for e in journal.recent(20):
 
 ## Leave a journal entry when something surprises you
 
-Whenever a model behaved oddly, an error was confusing, or you had to work
-around something, leave a note. This is how the next session learns:
-
 ```python
 from falaw import journal
 journal.issue("FLUX dev returned NSFW=True for a benign prompt",
-              suggestion="Document an example that triggers it",
-              tags=("flux", "safety"))
-journal.improvement("Add an `upscale_image` tool that wraps clarity-upscaler",
-                    tags=("backlog",))
-journal.note("schnell quality=fast returns 1024x1024 by default")
+              suggestion="Try guidance_scale=2.0", tags=("flux", "safety"))
+journal.improvement("Pass beat.emotion as a TTS prompt arg for emotion-aware models",
+                    tags=("backlog", "directorial"))
+journal.note("schnell at quality='fast' returns 1024x1024 by default")
 ```
 
 ## Pick a model without memorizing IDs
 
 ```python
 from falaw import list_models, pick_model
-[m.id for m in list_models(category='video')]
-pick_model(category='image', quality_tier='ultra').id
+[m.id for m in list_models(category='image_to_video')]
+pick_model(category='image_edit', quality_tier='ultra').id
 ```
 
 ## Tools
 
-The functions below are also registered tools; bridges (MCP server, HTTP
+Every function below is a registered tool; bridges (MCP server, HTTP
 service, UI) derive their surfaces from the same registry.
 
 
@@ -123,6 +213,73 @@ Remove the background from an image, returning a transparent PNG. Defaults to Bi
 
 Examples:
   - `falaw.remove_background(**{'image_url': 'https://example.com/photo.jpg'})`
+
+
+### `falaw.llm_complete`
+
+Run a single LLM completion via fal-ai/any-llm. Returns the raw text output. Use `system` for instruction prompts, `prompt` for the user message. Cached by content.
+
+Examples:
+  - `falaw.llm_complete(**{'prompt': 'summarize this scene in one line', 'system': 'you are a script consultant'})`
+
+
+### `falaw.parse_screenplay`
+
+Parse prose screenplay/treatment text into a structured Scene (via any-llm). Returns a falaw.Scene you can render directly. Use `model_hint` to pick a stronger LLM for nuanced material.
+
+
+### `falaw.apply_note_to_beat`
+
+Apply a directorial note to a single Beat using an LLM. Returns an updated Beat (same id; modified content fields). Use this to implement 'he cracks on this line; she softens but hides it' without manually rewriting the structure.
+
+Examples:
+  - `falaw.apply_note_to_beat(**{'beat': {'id': '001-john-abcd', 'speaker': 'John', 'line': "It's fine.", 'emotion': ''}, 'note': 'He cracks on this line --- voice goes up.'})`
+
+
+### `falaw.apply_note_to_scene`
+
+Apply a directorial note to the whole Scene by asking the LLM for a JSON patch (which beats/shots to edit, with new content). Returns a new Scene. Use for cross-cutting notes like 'tighten the pacing in the middle' or 'add a reaction shot after beat 5'.
+
+
+### `falaw.cast_character`
+
+Generate or attach a canonical face image for a character, plus an optional voice. Returns an updated Character with `reference_image_url` set --- the anchor used by every later lipsync render. Pass an existing image_url to skip generation.
+
+Examples:
+  - `falaw.cast_character(**{'name': 'Sarah', 'description': 'mid-30s, sharp features, dark curly hair, wary eyes'})`
+
+
+### `falaw.cast_voice`
+
+Attach or refine a Voice for an existing Character. Provide a `reference_audio_url` (for cloning) or a `voice_id` (model-side preset). Returns the updated Character.
+
+
+### `falaw.establish_environment`
+
+Generate or attach a canonical establishing image for a location. Used as visual anchor and lighting reference for every shot in that environment. Returns an Environment.
+
+Examples:
+  - `falaw.establish_environment(**{'name': 'diner', 'description': '1950s American chrome diner, neon outside, half-empty booths', 'time_of_day': 'midnight'})`
+
+
+### `falaw.storyboard_shot`
+
+Render a still preview (storyboard frame) for a single Shot, composited with its Environment and the Characters in view. Returns the URL of the still --- use it as a reference image for downstream image-to-video.
+
+
+### `falaw.render_beat`
+
+Render one Beat: TTS (using the speaker's Voice) → lipsync to the speaker's reference image. Cached by content hash --- re-rendering an unchanged Beat is a no-op. Returns {url, cache_hit, hash, audio_url}.
+
+
+### `falaw.render_shot`
+
+Render a Shot: a still (storyboard) or short clip if `as_video=True` (image-to-video). Cached by content hash. Returns {url, cache_hit, hash, kind}.
+
+
+### `falaw.render_scene`
+
+Render an entire Scene: every Shot + every Beat, with caching so unchanged units are no-ops. Returns a manifest dict with per-beat and per-shot results, plus aggregate counts. Pass `force=True` to bypass the cache.
 
 
 ### `falaw.text_to_video`
