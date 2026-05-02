@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>falaw.operations.images &mdash; falaw 0.0.1 documentation</title>
+  <title>falaw.operations.images &mdash; falaw 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../../_static/documentation_options.js?v=47de8214"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -24,8 +24,8 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="falaw.refresh" href="../refresh.html" />
-    <link rel="prev" title="falaw.operations.audio" href="audio.html" /> 
+    <link rel="next" title="falaw.operations.video" href="video.html" />
+    <link rel="prev" title="falaw.operations.avatar" href="avatar.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,13 +57,19 @@
 <li class="toctree-l1"><a class="reference internal" href="../bridges/service.html">falaw.bridges.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../bridges/skill.html">falaw.bridges.skill</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core.html">falaw.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../corpus.html">falaw.corpus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../journal.html">falaw.journal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../operations.html">falaw.operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="audio.html">falaw.operations.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="avatar.html">falaw.operations.avatar</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">falaw.operations.images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#falaw.operations.images.edit_image"><code class="docutils literal notranslate"><span class="pre">edit_image()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#falaw.operations.images.generate_image"><code class="docutils literal notranslate"><span class="pre">generate_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#falaw.operations.images.remove_background"><code class="docutils literal notranslate"><span class="pre">remove_background()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#falaw.operations.images.upscale_image"><code class="docutils literal notranslate"><span class="pre">upscale_image()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="video.html">falaw.operations.video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../refresh.html">falaw.refresh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../registry.html">falaw.registry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../results.html">falaw.results</a></li>
@@ -96,14 +102,29 @@
              
   <section id="module-falaw.operations.images">
 <span id="falaw-operations-images"></span><h1>falaw.operations.images<a class="headerlink" href="#module-falaw.operations.images" title="Link to this heading"></a></h1>
-<p>Image-generation operations.</p>
+<p>Image-generation and image-manipulation operations.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="falaw.operations.images.edit_image">
+<span class="sig-prename descclassname"><span class="pre">falaw.operations.images.</span></span><span class="sig-name descname"><span class="pre">edit_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'balanced'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../results.html#falaw.results.Result" title="falaw.results.Result"><span class="pre">Result</span></a></span></span><a class="reference internal" href="../../../_modules/falaw/operations/images.html#edit_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#falaw.operations.images.edit_image" title="Link to this definition"></a></dt>
+<dd><p>Edit an image with a natural-language instruction.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="falaw.operations.images.generate_image">
 <span class="sig-prename descclassname"><span class="pre">falaw.operations.images.</span></span><span class="sig-name descname"><span class="pre">generate_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'balanced'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'landscape_4_3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../results.html#falaw.results.Result" title="falaw.results.Result"><span class="pre">Result</span></a></span></span><a class="reference internal" href="../../../_modules/falaw/operations/images.html#generate_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#falaw.operations.images.generate_image" title="Link to this definition"></a></dt>
 <dd><p>Generate an image from a text prompt.</p>
-<p>Pass <code class="docutils literal notranslate"><span class="pre">quality</span></code> to select a tier; pass <code class="docutils literal notranslate"><span class="pre">model_id</span></code> to override the
-automatic choice. <code class="docutils literal notranslate"><span class="pre">extra</span></code> is forwarded verbatim to the fal model so
-advanced users can set <code class="docutils literal notranslate"><span class="pre">num_inference_steps</span></code>, <code class="docutils literal notranslate"><span class="pre">guidance_scale</span></code>, etc.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="falaw.operations.images.remove_background">
+<span class="sig-prename descclassname"><span class="pre">falaw.operations.images.</span></span><span class="sig-name descname"><span class="pre">remove_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'high'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../results.html#falaw.results.Result" title="falaw.results.Result"><span class="pre">Result</span></a></span></span><a class="reference internal" href="../../../_modules/falaw/operations/images.html#remove_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#falaw.operations.images.remove_background" title="Link to this definition"></a></dt>
+<dd><p>Remove the background from an image.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="falaw.operations.images.upscale_image">
+<span class="sig-prename descclassname"><span class="pre">falaw.operations.images.</span></span><span class="sig-name descname"><span class="pre">upscale_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../results.html#falaw.results.Result" title="falaw.results.Result"><span class="pre">Result</span></a></span></span><a class="reference internal" href="../../../_modules/falaw/operations/images.html#upscale_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#falaw.operations.images.upscale_image" title="Link to this definition"></a></dt>
+<dd><p>Upscale an image.</p>
 </dd></dl>
 
 </section>
@@ -112,8 +133,8 @@ advanced users can set <code class="docutils literal notranslate"><span class="p
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="audio.html" class="btn btn-neutral float-left" title="falaw.operations.audio" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../refresh.html" class="btn btn-neutral float-right" title="falaw.refresh" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="avatar.html" class="btn btn-neutral float-left" title="falaw.operations.avatar" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="video.html" class="btn btn-neutral float-right" title="falaw.operations.video" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

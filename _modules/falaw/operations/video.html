@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>falaw.operations.audio &mdash; falaw 0.0.3 documentation</title>
+  <title>falaw.operations.video &mdash; falaw 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -82,7 +82,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">falaw.operations.audio</li>
+      <li class="breadcrumb-item active">falaw.operations.video</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -91,8 +91,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for falaw.operations.audio</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Audio operations: text-to-speech and friends.&quot;&quot;&quot;</span>
+  <h1>Source code for falaw.operations.video</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Video-generation operations: text-to-video and image-to-video.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -103,29 +103,26 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">parse_response</span>
 
 
-<div class="viewcode-block" id="text_to_speech">
-<a class="viewcode-back" href="../../../module_docs/falaw/operations/audio.html#falaw.text_to_speech">[docs]</a>
+<div class="viewcode-block" id="text_to_video">
+<a class="viewcode-back" href="../../../module_docs/falaw/operations/video.html#falaw.text_to_video">[docs]</a>
 <span class="nd">@register_tool</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;text_to_speech&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;text_to_video&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-        <span class="s2">&quot;Synthesize speech from text. Picks a TTS model by quality tier; &quot;</span>
-        <span class="s2">&quot;pass `voice` and `extra` for model-specific knobs. Returns a &quot;</span>
-        <span class="s2">&quot;falaw.Result whose .first asset is the audio URL.&quot;</span>
+        <span class="s2">&quot;Generate a video from a text prompt. Picks a tier-appropriate &quot;</span>
+        <span class="s2">&quot;model (Veo 3 for ultra, Seedance Pro for high). Use `extra` to &quot;</span>
+        <span class="s2">&quot;pass through model-specific knobs like duration, aspect_ratio, &quot;</span>
+        <span class="s2">&quot;negative_prompt.&quot;</span>
     <span class="p">),</span>
-    <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;tts&quot;</span><span class="p">,</span> <span class="s2">&quot;generate&quot;</span><span class="p">),</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;text_to_video&quot;</span><span class="p">,</span> <span class="s2">&quot;generate&quot;</span><span class="p">),</span>
     <span class="n">input_schema</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;prompt&quot;</span><span class="p">],</span>
         <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
             <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;fast&quot;</span><span class="p">,</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;ultra&quot;</span><span class="p">],</span>
-                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;voice&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Voice identifier; format depends on the model.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
             <span class="s2">&quot;extra&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">},</span>
@@ -133,69 +130,73 @@
     <span class="p">},</span>
     <span class="n">output_schema</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;falaw.Result&quot;</span><span class="p">},</span>
     <span class="n">examples</span><span class="o">=</span><span class="p">(</span>
-        <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello world&quot;</span><span class="p">,</span> <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="s2">&quot;balanced&quot;</span><span class="p">},</span>
-        <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Bonjour le monde&quot;</span><span class="p">,</span> <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;voice&quot;</span><span class="p">:</span> <span class="s2">&quot;fr-FR-female-1&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="s2">&quot;A drone shot over a misty pine forest at dawn&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="s2">&quot;Macro: a single dewdrop on a spider web&quot;</span><span class="p">,</span> <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="s2">&quot;ultra&quot;</span><span class="p">},</span>
     <span class="p">),</span>
 <span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">text_to_speech</span><span class="p">(</span>
-    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">text_to_video</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
-    <span class="n">voice</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
     <span class="n">model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">extra</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synthesize speech. ``voice`` semantics are model-specific.&quot;&quot;&quot;</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;tts&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
-    <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
-    <span class="k">if</span> <span class="n">voice</span><span class="p">:</span>
-        <span class="n">arguments</span><span class="p">[</span><span class="s2">&quot;voice&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">voice</span>
-    <span class="n">arguments</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{})</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a video from a text prompt.&quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;text_to_video&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+    <span class="p">)</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{})}</span>
     <span class="n">raw</span> <span class="o">=</span> <span class="n">call_fal</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">parse_response</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">application</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">arguments</span><span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="voice_clone">
-<a class="viewcode-back" href="../../../module_docs/falaw/operations/audio.html#falaw.voice_clone">[docs]</a>
+<div class="viewcode-block" id="image_to_video">
+<a class="viewcode-back" href="../../../module_docs/falaw/operations/video.html#falaw.image_to_video">[docs]</a>
 <span class="nd">@register_tool</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;voice_clone&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;image_to_video&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-        <span class="s2">&quot;Synthesize speech in a cloned voice. Provide a `reference_audio_url` &quot;</span>
-        <span class="s2">&quot;(a few seconds of the target voice) and the text to speak. Returns &quot;</span>
-        <span class="s2">&quot;a falaw.Result whose .first asset is the cloned-voice audio URL.&quot;</span>
+        <span class="s2">&quot;Animate a still image into a short video. Optional prompt steers &quot;</span>
+        <span class="s2">&quot;the motion. Picks a tier-appropriate i2v model (Kling Master for &quot;</span>
+        <span class="s2">&quot;ultra, Seedance for high, Hailuo for balanced).&quot;</span>
     <span class="p">),</span>
-    <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;voice_clone&quot;</span><span class="p">,</span> <span class="s2">&quot;generate&quot;</span><span class="p">),</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;image_to_video&quot;</span><span class="p">,</span> <span class="s2">&quot;generate&quot;</span><span class="p">),</span>
     <span class="n">input_schema</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;reference_audio_url&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;image_url&quot;</span><span class="p">],</span>
         <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;reference_audio_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
-            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;balanced&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;ultra&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
             <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
             <span class="s2">&quot;extra&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">},</span>
         <span class="p">},</span>
     <span class="p">},</span>
     <span class="n">output_schema</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;falaw.Result&quot;</span><span class="p">},</span>
     <span class="n">examples</span><span class="o">=</span><span class="p">(</span>
-        <span class="p">{</span><span class="s2">&quot;reference_audio_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/me.wav&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello, this is in my voice.&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://...&quot;</span><span class="p">,</span> <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="s2">&quot;the camera slowly zooms in&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://...&quot;</span><span class="p">,</span> <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="s2">&quot;balanced&quot;</span><span class="p">},</span>
     <span class="p">),</span>
 <span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">voice_clone</span><span class="p">(</span>
-    <span class="n">reference_audio_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">image_to_video</span><span class="p">(</span>
+    <span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
+    <span class="n">quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
     <span class="n">model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">extra</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate speech in a cloned voice.&quot;&quot;&quot;</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;voice_clone&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="s2">&quot;high&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
-    <span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;reference_audio_url&quot;</span><span class="p">:</span> <span class="n">reference_audio_url</span><span class="p">,</span>
-        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
-        <span class="o">**</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{}),</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Animate a still image into a video.&quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;image_to_video&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+    <span class="p">)</span>
+    <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="n">image_url</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{})}</span>
+    <span class="k">if</span> <span class="n">prompt</span><span class="p">:</span>
+        <span class="n">arguments</span><span class="p">[</span><span class="s2">&quot;prompt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prompt</span>
     <span class="n">raw</span> <span class="o">=</span> <span class="n">call_fal</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">parse_response</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">application</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">arguments</span><span class="p">)</span></div>
 

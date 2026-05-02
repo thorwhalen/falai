@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>falaw.operations.audio &mdash; falaw 0.0.3 documentation</title>
+  <title>falaw.operations.avatar &mdash; falaw 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -82,7 +82,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">falaw.operations.audio</li>
+      <li class="breadcrumb-item active">falaw.operations.avatar</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -91,8 +91,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for falaw.operations.audio</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Audio operations: text-to-speech and friends.&quot;&quot;&quot;</span>
+  <h1>Source code for falaw.operations.avatar</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Avatar / lip-sync operations and composers.</span>
+
+<span class="sd">Lip-sync is a primitive (image + audio → talking video). The composer</span>
+<span class="sd">``talking_avatar_from_text`` chains TTS → lipsync, demonstrating the</span>
+<span class="sd">pattern for multi-step workflows.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -101,31 +106,29 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core</span><span class="w"> </span><span class="kn">import</span> <span class="n">call_fal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">pick_model</span><span class="p">,</span> <span class="n">register_tool</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">parse_response</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.audio</span><span class="w"> </span><span class="kn">import</span> <span class="n">text_to_speech</span>
 
 
-<div class="viewcode-block" id="text_to_speech">
-<a class="viewcode-back" href="../../../module_docs/falaw/operations/audio.html#falaw.text_to_speech">[docs]</a>
+<div class="viewcode-block" id="lipsync">
+<a class="viewcode-back" href="../../../module_docs/falaw/operations/avatar.html#falaw.lipsync">[docs]</a>
 <span class="nd">@register_tool</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;text_to_speech&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;lipsync&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-        <span class="s2">&quot;Synthesize speech from text. Picks a TTS model by quality tier; &quot;</span>
-        <span class="s2">&quot;pass `voice` and `extra` for model-specific knobs. Returns a &quot;</span>
-        <span class="s2">&quot;falaw.Result whose .first asset is the audio URL.&quot;</span>
+        <span class="s2">&quot;Generate a lip-synced talking-head video from a face image and an &quot;</span>
+        <span class="s2">&quot;audio track. Returns a falaw.Result whose .first asset is the &quot;</span>
+        <span class="s2">&quot;synced video URL.&quot;</span>
     <span class="p">),</span>
-    <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;tts&quot;</span><span class="p">,</span> <span class="s2">&quot;generate&quot;</span><span class="p">),</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;lipsync&quot;</span><span class="p">,</span> <span class="s2">&quot;generate&quot;</span><span class="p">),</span>
     <span class="n">input_schema</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;image_url&quot;</span><span class="p">,</span> <span class="s2">&quot;audio_url&quot;</span><span class="p">],</span>
         <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;audio_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
             <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;fast&quot;</span><span class="p">,</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;ultra&quot;</span><span class="p">],</span>
-                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;voice&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Voice identifier; format depends on the model.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;balanced&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
             <span class="s2">&quot;extra&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">},</span>
@@ -133,71 +136,69 @@
     <span class="p">},</span>
     <span class="n">output_schema</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;falaw.Result&quot;</span><span class="p">},</span>
     <span class="n">examples</span><span class="o">=</span><span class="p">(</span>
-        <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello world&quot;</span><span class="p">,</span> <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="s2">&quot;balanced&quot;</span><span class="p">},</span>
-        <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Bonjour le monde&quot;</span><span class="p">,</span> <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;voice&quot;</span><span class="p">:</span> <span class="s2">&quot;fr-FR-female-1&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://...&quot;</span><span class="p">,</span> <span class="s2">&quot;audio_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://...&quot;</span><span class="p">},</span>
     <span class="p">),</span>
 <span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">text_to_speech</span><span class="p">(</span>
-    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lipsync</span><span class="p">(</span>
+    <span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">audio_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
-    <span class="n">voice</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
     <span class="n">model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">extra</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synthesize speech. ``voice`` semantics are model-specific.&quot;&quot;&quot;</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;tts&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
-    <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
-    <span class="k">if</span> <span class="n">voice</span><span class="p">:</span>
-        <span class="n">arguments</span><span class="p">[</span><span class="s2">&quot;voice&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">voice</span>
-    <span class="n">arguments</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{})</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Lip-sync an audio track to a face image.&quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;lipsync&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="n">image_url</span><span class="p">,</span> <span class="s2">&quot;audio_url&quot;</span><span class="p">:</span> <span class="n">audio_url</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{})}</span>
     <span class="n">raw</span> <span class="o">=</span> <span class="n">call_fal</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">parse_response</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">application</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">arguments</span><span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="voice_clone">
-<a class="viewcode-back" href="../../../module_docs/falaw/operations/audio.html#falaw.voice_clone">[docs]</a>
+<div class="viewcode-block" id="talking_avatar_from_text">
+<a class="viewcode-back" href="../../../module_docs/falaw/operations/avatar.html#falaw.talking_avatar_from_text">[docs]</a>
 <span class="nd">@register_tool</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;voice_clone&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;talking_avatar_from_text&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-        <span class="s2">&quot;Synthesize speech in a cloned voice. Provide a `reference_audio_url` &quot;</span>
-        <span class="s2">&quot;(a few seconds of the target voice) and the text to speak. Returns &quot;</span>
-        <span class="s2">&quot;a falaw.Result whose .first asset is the cloned-voice audio URL.&quot;</span>
+        <span class="s2">&quot;Composer: text + face image → lip-synced talking video. Internally &quot;</span>
+        <span class="s2">&quot;runs `text_to_speech(text)` then `lipsync(image_url, audio_url)`. &quot;</span>
+        <span class="s2">&quot;Returns the lipsync Result. Use this when you have text and a &quot;</span>
+        <span class="s2">&quot;portrait but no pre-recorded audio.&quot;</span>
     <span class="p">),</span>
-    <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;voice_clone&quot;</span><span class="p">,</span> <span class="s2">&quot;generate&quot;</span><span class="p">),</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;avatar&quot;</span><span class="p">,</span> <span class="s2">&quot;compose&quot;</span><span class="p">),</span>
     <span class="n">input_schema</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;reference_audio_url&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;image_url&quot;</span><span class="p">],</span>
         <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;reference_audio_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
             <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
-            <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
-            <span class="s2">&quot;extra&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;voice&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;tts_quality&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;balanced&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;lipsync_quality&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">},</span>
         <span class="p">},</span>
     <span class="p">},</span>
-    <span class="n">output_schema</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;falaw.Result&quot;</span><span class="p">},</span>
+    <span class="n">output_schema</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;falaw.Result (the lipsync video)&quot;</span><span class="p">},</span>
     <span class="n">examples</span><span class="o">=</span><span class="p">(</span>
-        <span class="p">{</span><span class="s2">&quot;reference_audio_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/me.wav&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello, this is in my voice.&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Welcome to the demo.&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/host.jpg&quot;</span><span class="p">},</span>
     <span class="p">),</span>
 <span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">voice_clone</span><span class="p">(</span>
-    <span class="n">reference_audio_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">talking_avatar_from_text</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">extra</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">voice</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tts_quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
+    <span class="n">lipsync_quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate speech in a cloned voice.&quot;&quot;&quot;</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;voice_clone&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="s2">&quot;high&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
-    <span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;reference_audio_url&quot;</span><span class="p">:</span> <span class="n">reference_audio_url</span><span class="p">,</span>
-        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
-        <span class="o">**</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{}),</span>
-    <span class="p">}</span>
-    <span class="n">raw</span> <span class="o">=</span> <span class="n">call_fal</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">parse_response</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">application</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">arguments</span><span class="p">)</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;text + face image → lip-synced video. Two fal calls, one Result.&quot;&quot;&quot;</span>
+    <span class="n">tts_result</span> <span class="o">=</span> <span class="n">text_to_speech</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="n">voice</span><span class="p">,</span> <span class="n">quality</span><span class="o">=</span><span class="n">tts_quality</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tts_result</span><span class="o">.</span><span class="n">first</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;talking_avatar_from_text: TTS produced no audio asset; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;raw response: </span><span class="si">{</span><span class="n">tts_result</span><span class="o">.</span><span class="n">raw</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">lipsync</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">tts_result</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">quality</span><span class="o">=</span><span class="n">lipsync_quality</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>falaw.registry &mdash; falaw 0.0.1 documentation</title>
+  <title>falaw.registry &mdash; falaw 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/documentation_options.js?v=47de8214"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -57,10 +57,13 @@
 <li class="toctree-l1"><a class="reference internal" href="bridges/service.html">falaw.bridges.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bridges/skill.html">falaw.bridges.skill</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">falaw.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="corpus.html">falaw.corpus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="journal.html">falaw.journal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operations.html">falaw.operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operations/audio.html">falaw.operations.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operations/avatar.html">falaw.operations.avatar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operations/images.html">falaw.operations.images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operations/video.html">falaw.operations.video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="refresh.html">falaw.refresh</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">falaw.registry</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#falaw.registry.pick_model"><code class="docutils literal notranslate"><span class="pre">pick_model()</span></code></a></li>
@@ -109,9 +112,11 @@
 <dt class="sig sig-object py" id="falaw.registry.pick_model">
 <span class="sig-prename descclassname"><span class="pre">falaw.registry.</span></span><span class="sig-name descname"><span class="pre">pick_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality_tier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'balanced'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#falaw.base.ModelRecord" title="falaw.base.ModelRecord"><span class="pre">ModelRecord</span></a></span></span><a class="reference internal" href="../../_modules/falaw/registry.html#pick_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#falaw.registry.pick_model" title="Link to this definition"></a></dt>
 <dd><p>Pick a sensible fal model for a (category, quality) request.</p>
-<p>Tries the exact tier; if absent, walks neighboring tiers; if still
-absent, falls back to any model in the category. Raises KeyError
-only when the category has no models at all.</p>
+<p>First-match semantics: when several models share a tier, the earlier
+entry wins. Curated entries are written first in <cite>data/models.json</cite>,
+so they take precedence over corpus-merged additions. If no model
+has the exact tier, neighboring tiers are tried. KeyError only when
+the category is empty.</p>
 </dd></dl>
 
 <dl class="py function">

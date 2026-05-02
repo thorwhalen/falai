@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to falaw’s documentation! &mdash; falaw 0.0.1 documentation</title>
+  <title>Welcome to falaw’s documentation! &mdash; falaw 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/documentation_options.js?v=47de8214"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -56,10 +56,13 @@
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/bridges/service.html">falaw.bridges.service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/bridges/skill.html">falaw.bridges.skill</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/core.html">falaw.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/corpus.html">falaw.corpus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/journal.html">falaw.journal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations.html">falaw.operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations/audio.html">falaw.operations.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations/avatar.html">falaw.operations.avatar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations/images.html">falaw.operations.images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations/video.html">falaw.operations.video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/refresh.html">falaw.refresh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/registry.html">falaw.registry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/results.html">falaw.results</a></li>
@@ -102,14 +105,24 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.ToolSpec"><code class="docutils literal notranslate"><span class="pre">ToolSpec</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.call_fal"><code class="docutils literal notranslate"><span class="pre">call_fal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.edit_image"><code class="docutils literal notranslate"><span class="pre">edit_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.extract_models_from_corpus"><code class="docutils literal notranslate"><span class="pre">extract_models_from_corpus()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.generate_image"><code class="docutils literal notranslate"><span class="pre">generate_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.image_to_video"><code class="docutils literal notranslate"><span class="pre">image_to_video()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.lipsync"><code class="docutils literal notranslate"><span class="pre">lipsync()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.parse_response"><code class="docutils literal notranslate"><span class="pre">parse_response()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.pick_model"><code class="docutils literal notranslate"><span class="pre">pick_model()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.refresh_full_docs"><code class="docutils literal notranslate"><span class="pre">refresh_full_docs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.refresh_llms"><code class="docutils literal notranslate"><span class="pre">refresh_llms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.refresh_models_from_corpus"><code class="docutils literal notranslate"><span class="pre">refresh_models_from_corpus()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.refresh_state"><code class="docutils literal notranslate"><span class="pre">refresh_state()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.register_tool"><code class="docutils literal notranslate"><span class="pre">register_tool()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.remove_background"><code class="docutils literal notranslate"><span class="pre">remove_background()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.talking_avatar_from_text"><code class="docutils literal notranslate"><span class="pre">talking_avatar_from_text()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.text_to_speech"><code class="docutils literal notranslate"><span class="pre">text_to_speech()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.text_to_video"><code class="docutils literal notranslate"><span class="pre">text_to_video()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.upscale_image"><code class="docutils literal notranslate"><span class="pre">upscale_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.voice_clone"><code class="docutils literal notranslate"><span class="pre">voice_clone()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/__main__.html">falaw.__main__</a></li>
@@ -130,6 +143,11 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/core.html#falaw.core.call_fal"><code class="docutils literal notranslate"><span class="pre">call_fal()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/corpus.html">falaw.corpus</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/corpus.html#falaw.corpus.extract_models_from_corpus"><code class="docutils literal notranslate"><span class="pre">extract_models_from_corpus()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/corpus.html#falaw.corpus.refresh_models_from_corpus"><code class="docutils literal notranslate"><span class="pre">refresh_models_from_corpus()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/journal.html">falaw.journal</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/journal.html#falaw.journal.Journal"><code class="docutils literal notranslate"><span class="pre">Journal</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/journal.html#falaw.journal.JournalEntry"><code class="docutils literal notranslate"><span class="pre">JournalEntry</span></code></a></li>
@@ -138,10 +156,24 @@
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations.html">falaw.operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations/audio.html">falaw.operations.audio</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/audio.html#falaw.operations.audio.text_to_speech"><code class="docutils literal notranslate"><span class="pre">text_to_speech()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/audio.html#falaw.operations.audio.voice_clone"><code class="docutils literal notranslate"><span class="pre">voice_clone()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations/avatar.html">falaw.operations.avatar</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/avatar.html#falaw.operations.avatar.lipsync"><code class="docutils literal notranslate"><span class="pre">lipsync()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/avatar.html#falaw.operations.avatar.talking_avatar_from_text"><code class="docutils literal notranslate"><span class="pre">talking_avatar_from_text()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations/images.html">falaw.operations.images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/images.html#falaw.operations.images.edit_image"><code class="docutils literal notranslate"><span class="pre">edit_image()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/images.html#falaw.operations.images.generate_image"><code class="docutils literal notranslate"><span class="pre">generate_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/images.html#falaw.operations.images.remove_background"><code class="docutils literal notranslate"><span class="pre">remove_background()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/images.html#falaw.operations.images.upscale_image"><code class="docutils literal notranslate"><span class="pre">upscale_image()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/operations/video.html">falaw.operations.video</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/video.html#falaw.operations.video.image_to_video"><code class="docutils literal notranslate"><span class="pre">image_to_video()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/operations/video.html#falaw.operations.video.text_to_video"><code class="docutils literal notranslate"><span class="pre">text_to_video()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/refresh.html">falaw.refresh</a><ul>
@@ -179,7 +211,7 @@
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p>Release: 0.0.1</p>
+<p>Release: 0.0.3</p>
 <p>Last change: May 02, 2026</p>
 </section>
 
