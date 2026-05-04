@@ -134,15 +134,23 @@ def render_beat(
         audio_url = tts_result.first.url
 
     if beat.line and character.reference_image_url:
-        ls_model = pick_model(category="lipsync", quality_tier=lipsync_quality).id
-        ls_args = {
+        # `avatar` category = image+audio → talking video (the right primitive
+        # for "still face speaks line"). `lipsync` category requires an
+        # existing video, which we don't have here.
+        av_model = pick_model(category="avatar", quality_tier=lipsync_quality).id
+        # ai-avatar requires a non-empty `prompt`; omnihuman accepts one.
+        # Use beat.emotion / beat.action as the directorial hint; fall back
+        # to a neutral default so the schema is satisfied.
+        av_prompt = beat.emotion or beat.action or "natural delivery"
+        av_args = {
             "image_url": character.reference_image_url,
             "audio_url": audio_url,
+            "prompt": av_prompt,
         }
-        ls_raw = cached_call_fal(ls_model, ls_args, refresh=force)
-        ls_result = parse_response(ls_raw, application=ls_model, arguments=ls_args)
-        if ls_result.first:
-            video_url = ls_result.first.url
+        av_raw = cached_call_fal(av_model, av_args, refresh=force)
+        av_result = parse_response(av_raw, application=av_model, arguments=av_args)
+        if av_result.first:
+            video_url = av_result.first.url
 
     manifest = {
         "url": video_url or audio_url,
@@ -300,51 +308,32 @@ def render_scene(
     shot_quality: str = "balanced",
     shots_as_video: bool = False,
     force: bool = False,
+    concurrency: int = 1,
 ) -> dict:
-    """Render every shot and beat. Returns a manifest dict."""
-    chars_by_name = {c.name: c for c in scene.characters}
-    envs_by_name = {e.name: e for e in scene.environments}
+    """Render every shot and beat. Returns a manifest dict.
 
+    ``concurrency`` controls how many shots/beats run in parallel
+    against fal. The work is HTTP-bound, so a thread pool is enough.
+    Default ``1`` preserves serial behavior. Use
+    :func:`iter_render_scene` instead if you want results yielded as
+    each unit completes (for live UI updates).
+    """
+    iterator = iter_render_scene(
+        scene,
+        tts_quality=tts_quality,
+        lipsync_quality=lipsync_quality,
+        shot_quality=shot_quality,
+        shots_as_video=shots_as_video,
+        force=force,
+        concurrency=concurrency,
+    )
     shot_results: list[dict] = []
-    for shot in scene.shots:
-        env = envs_by_name.get(shot.environment)
-        chars = tuple(
-            chars_by_name[name] for name in shot.characters if name in chars_by_name
-        )
-        shot_results.append(
-            render_shot(
-                shot,
-                environment=env,
-                characters=chars,
-                style=scene.style,
-                as_video=shots_as_video,
-                quality=shot_quality,
-                force=force,
-            )
-        )
-
     beat_results: list[dict] = []
-    for beat in scene.beats:
-        speaker = chars_by_name.get(beat.speaker)
-        if speaker is None:
-            beat_results.append(
-                {
-                    "beat_id": beat.id,
-                    "skipped": "no character",
-                    "speaker": beat.speaker,
-                    "cache_hit": False,
-                }
-            )
-            continue
-        beat_results.append(
-            render_beat(
-                beat,
-                speaker,
-                tts_quality=tts_quality,
-                lipsync_quality=lipsync_quality,
-                force=force,
-            )
-        )
+    for kind, result in iterator:
+        if kind == "shot":
+            shot_results.append(result)
+        else:
+            beat_results.append(result)
 
     cache_hits = sum(
         int(r.get("cache_hit", False)) for r in shot_results + beat_results
@@ -358,6 +347,84 @@ def render_scene(
         "shots": shot_results,
         "beats": beat_results,
     }
+
+
+def iter_render_scene(
+    scene: Scene,
+    *,
+    tts_quality: str = "balanced",
+    lipsync_quality: str = "high",
+    shot_quality: str = "balanced",
+    shots_as_video: bool = False,
+    force: bool = False,
+    concurrency: int = 1,
+):
+    """Yield ``(kind, result)`` pairs as each shot/beat finishes.
+
+    ``kind`` ∈ ``{"shot", "beat"}``. With ``concurrency=1`` results
+    arrive in submission order (shots before beats). With
+    ``concurrency > 1`` they arrive in completion order (use the
+    ``"shot_id"`` / ``"beat_id"`` keys to re-key by identity).
+
+    Cache hits are immediate: a fully-cached scene yields all results
+    in close succession even at ``concurrency=1``.
+    """
+    chars_by_name = {c.name: c for c in scene.characters}
+    envs_by_name = {e.name: e for e in scene.environments}
+
+    def _one_shot(shot: Shot) -> dict:
+        env = envs_by_name.get(shot.environment)
+        chars = tuple(
+            chars_by_name[name]
+            for name in shot.characters
+            if name in chars_by_name
+        )
+        return render_shot(
+            shot,
+            environment=env,
+            characters=chars,
+            style=scene.style,
+            as_video=shots_as_video,
+            quality=shot_quality,
+            force=force,
+        )
+
+    def _one_beat(beat: Beat) -> dict:
+        speaker = chars_by_name.get(beat.speaker)
+        if speaker is None:
+            return {
+                "beat_id": beat.id,
+                "skipped": "no character",
+                "speaker": beat.speaker,
+                "cache_hit": False,
+            }
+        return render_beat(
+            beat,
+            speaker,
+            tts_quality=tts_quality,
+            lipsync_quality=lipsync_quality,
+            force=force,
+        )
+
+    if concurrency <= 1:
+        for shot in scene.shots:
+            yield "shot", _one_shot(shot)
+        for beat in scene.beats:
+            yield "beat", _one_beat(beat)
+        return
+
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    with ThreadPoolExecutor(max_workers=concurrency) as ex:
+        futures = {}
+        for shot in scene.shots:
+            fut = ex.submit(_one_shot, shot)
+            futures[fut] = "shot"
+        for beat in scene.beats:
+            fut = ex.submit(_one_beat, beat)
+            futures[fut] = "beat"
+        for fut in as_completed(futures):
+            yield futures[fut], fut.result()
 
 
 def manifest_path_for(scene: Scene, *, dir: Optional[str] = None) -> str:

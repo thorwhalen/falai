@@ -5,7 +5,7 @@ so importing this package populates the ToolRegistry as a side effect.
 """
 
 from .audio import text_to_speech, voice_clone  # noqa: F401
-from .avatar import lipsync, talking_avatar_from_text  # noqa: F401
+from .avatar import animate_face, lipsync, talking_avatar_from_text  # noqa: F401
 from .images import (  # noqa: F401
     edit_image,
     generate_image,
@@ -24,5 +24,10 @@ from .preproduction import (  # noqa: F401
     establish_environment,
     storyboard_shot,
 )
-from .render import render_beat, render_scene, render_shot  # noqa: F401
+from .render import (  # noqa: F401
+    iter_render_scene,
+    render_beat,
+    render_scene,
+    render_shot,
+)
 from .video import image_to_video, text_to_video  # noqa: F401
