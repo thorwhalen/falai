@@ -114,6 +114,7 @@ def cached_call_fal(
     arguments: Mapping[str, Any],
     *,
     refresh: bool = False,
+    on_event=None,
 ) -> dict:
     """Call a fal model, but reuse the cached response when present.
 
@@ -121,6 +122,9 @@ def cached_call_fal(
         application: fal model id.
         arguments: model input dict.
         refresh: if True, bypass the cache and overwrite it with a fresh result.
+        on_event: Per-call subscriber for :class:`falaw.events.ProgressEvent`.
+            On a cache hit, a synthetic ``cache_hit`` event is emitted so
+            UIs can show "skipped" instead of "running".
 
     Returns:
         Raw fal response (whether from cache or network).
@@ -128,8 +132,20 @@ def cached_call_fal(
     if not refresh:
         hit = cache_get(application, arguments)
         if hit is not None:
+            import uuid as _uuid
+
+            from .events import ProgressEvent, emit
+
+            emit(
+                ProgressEvent(
+                    kind="cache_hit",
+                    application=application,
+                    call_id=_uuid.uuid4().hex[:12],
+                ),
+                also=(on_event,) if on_event else (),
+            )
             return hit
-    raw = call_fal(application, arguments)
+    raw = call_fal(application, arguments, on_event=on_event)
     cache_put(application, arguments, raw)
     return raw
 

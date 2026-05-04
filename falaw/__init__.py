@@ -26,8 +26,15 @@ from . import refresh as _refresh  # noqa: F401  (refresh registers tools too)
 from .base import ModelRecord, ToolSpec
 from .cache import cached_call_fal, cache_get, cache_put, cache_stats, materialize_asset
 from .core import call_fal
+from .events import (
+    ProgressEvent,
+    clear_subscribers,
+    subscribe,
+    unsubscribe,
+)
 from .corpus import extract_models_from_corpus, refresh_models_from_corpus
 from .operations import (
+    animate_face,
     apply_note_to_beat,
     apply_note_to_scene,
     cast_character,
@@ -85,11 +92,16 @@ __all__ = [
     "Environment",
     "ModelRecord",
     "Result",
+    "ProgressEvent",
     "Scene",
     "Session",
     "Shot",
     "ToolSpec",
     "Voice",
+    "clear_subscribers",
+    "subscribe",
+    "unsubscribe",
+    "animate_face",
     "apply_note_to_beat",
     "apply_note_to_scene",
     "beat_content_hash",
