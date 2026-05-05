@@ -279,7 +279,9 @@ Render a Shot: a still (storyboard) or short clip if `as_video=True` (image-to-v
 
 ### `falaw.render_scene`
 
-Render an entire Scene: every Shot + every Beat, with caching so unchanged units are no-ops. Returns a manifest dict with per-beat and per-shot results, plus aggregate counts. Pass `force=True` to bypass the cache.
+Render an entire Scene: every Shot + every Beat, with caching so unchanged units are no-ops. Returns a manifest dict with per-beat and per-shot results, plus aggregate counts. Pass `force=True` to bypass the cache. `concurrency=N` (default 1) runs N units in parallel through a thread pool. For live progress, use `iter_render_scene(scene, concurrency=N)` which yields `(kind, result)` pairs as each unit completes.
+
+Subscribe to progress events with `falaw.subscribe(callback)` (callback gets `ProgressEvent(kind, application, call_id, message, pct, elapsed_s)`); kinds include `queued`, `progress`, `log`, `done`, `error`, and `cache_hit`. Use `estimate_scene_cost(scene)` to get a USD `CostRollup` before kicking off a render — useful for budget gating.
 
 
 ### `falaw.text_to_video`

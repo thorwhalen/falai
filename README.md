@@ -40,9 +40,45 @@ export FAL_KEY="your-fal-api-key"
 | `text_to_speech(text, *, quality, voice, model_id, extra)` | TTS, picks a voice model by tier. |
 | `list_models(*, category, quality_tier)` | Browse the catalog. |
 | `pick_model(*, category, quality_tier)` | Pick a sensible default. |
-| `call_fal(application, arguments)` | Escape hatch to any fal model. Auto-journals on error. |
+| `call_fal(application, arguments, *, on_event)` | Escape hatch to any fal model. Emits `ProgressEvent`s + auto-journals on error. |
+| `cached_call_fal(...)` | Same, plus content-addressed cache; emits `cache_hit` events on reuse. |
+| `render_scene(scene, *, concurrency=N)` / `iter_render_scene(...)` | Render every shot+beat; thread-pooled, with yield-as-done iterator. |
+| `estimate_scene_cost(scene)` | Walk a Scene, return a `CostRollup` with per-line USD breakdown. |
+| `subscribe(callback)` | Attach a global subscriber to the `ProgressEvent` bus. |
 | `journal.note / issue / improvement(...)` | Leave a trace for future sessions. |
 | `Session(output_dir=...)` | Optional stateful controller. |
+
+### Structured progress events
+
+`call_fal` and `cached_call_fal` emit `ProgressEvent`s at every
+lifecycle transition (`queued`, `progress`, `log`, `done`, `error`,
+`cache_hit`). Subscribe per-call (`on_event=`) or globally
+(`falaw.subscribe(...)`); the legacy `on_log=print` is still honored
+for backward compatibility.
+
+```python
+from falaw import subscribe, generate_image
+
+subscribe(lambda ev: print(f"[{ev.kind}] {ev.application} {ev.elapsed_s:.2f}s"))
+generate_image("a tiger eye", quality="fast")
+```
+
+### Cost estimation
+
+`ModelRecord.cost_estimate: CostEstimate | None` carries a structured
+`{kind, amount, currency}` price (kinds: `per_call | per_image |
+per_second | per_token | per_megapixel`). `estimate_scene_cost(scene)`
+sums per-call costs and returns a `CostRollup` with per-line
+breakdown. Models without a populated `cost_estimate` appear in the
+rollup's `skipped` list so audits surface drift.
+
+### Concurrency
+
+`render_scene(..., concurrency=4)` runs shots and beats in parallel
+through a thread pool (fal calls are HTTP-bound). Default
+`concurrency=1` preserves serial behavior. Use `iter_render_scene(...)`
+to yield `(kind, result)` pairs as each unit completes — handy for
+live UI updates.
 
 ## Architecture
 
