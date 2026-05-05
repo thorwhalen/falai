@@ -114,8 +114,11 @@ def _shot_pricing_lines(
                 item_id=shot.id,
                 model_id=img_record.id,
                 amount=img_cost,
-                currency=(img_record.cost_estimate.currency
-                          if img_record.cost_estimate else "USD"),
+                currency=(
+                    img_record.cost_estimate.currency
+                    if img_record.cost_estimate
+                    else "USD"
+                ),
                 note="storyboard still",
             )
         )
@@ -124,9 +127,7 @@ def _shot_pricing_lines(
         v_record = pick_model(category="image_to_video", quality_tier=quality)
         v_cost = estimate_call_cost(v_record, seconds=duration)
         if v_cost is None:
-            skipped.append(
-                f"shot {shot.id} i2v: no cost_estimate on {v_record.id!r}"
-            )
+            skipped.append(f"shot {shot.id} i2v: no cost_estimate on {v_record.id!r}")
         else:
             out.append(
                 CostLine(
@@ -134,8 +135,11 @@ def _shot_pricing_lines(
                     item_id=shot.id,
                     model_id=v_record.id,
                     amount=v_cost,
-                    currency=(v_record.cost_estimate.currency
-                              if v_record.cost_estimate else "USD"),
+                    currency=(
+                        v_record.cost_estimate.currency
+                        if v_record.cost_estimate
+                        else "USD"
+                    ),
                     note=f"image_to_video × {duration:.1f}s",
                 )
             )
@@ -155,7 +159,11 @@ def _beat_pricing_lines(
         return []
 
     out: list[CostLine] = []
-    secs = estimated_seconds if estimated_seconds is not None else _word_count(beat.line) * 0.4
+    secs = (
+        estimated_seconds
+        if estimated_seconds is not None
+        else _word_count(beat.line) * 0.4
+    )
 
     tts_category = "voice_clone" if speaker_has_voice_clone else "tts"
     try:
@@ -166,9 +174,7 @@ def _beat_pricing_lines(
 
     tts_cost = estimate_call_cost(tts_record, seconds=secs)
     if tts_cost is None:
-        skipped.append(
-            f"beat {beat.id} tts: no cost_estimate on {tts_record.id!r}"
-        )
+        skipped.append(f"beat {beat.id} tts: no cost_estimate on {tts_record.id!r}")
     else:
         out.append(
             CostLine(
@@ -176,8 +182,11 @@ def _beat_pricing_lines(
                 item_id=beat.id,
                 model_id=tts_record.id,
                 amount=tts_cost,
-                currency=(tts_record.cost_estimate.currency
-                          if tts_record.cost_estimate else "USD"),
+                currency=(
+                    tts_record.cost_estimate.currency
+                    if tts_record.cost_estimate
+                    else "USD"
+                ),
                 note=f"~{secs:.1f}s of speech",
             )
         )
@@ -185,9 +194,7 @@ def _beat_pricing_lines(
     av_record = pick_model(category="avatar", quality_tier=lipsync_quality)
     av_cost = estimate_call_cost(av_record, seconds=secs)
     if av_cost is None:
-        skipped.append(
-            f"beat {beat.id} avatar: no cost_estimate on {av_record.id!r}"
-        )
+        skipped.append(f"beat {beat.id} avatar: no cost_estimate on {av_record.id!r}")
     else:
         out.append(
             CostLine(
@@ -195,8 +202,11 @@ def _beat_pricing_lines(
                 item_id=beat.id,
                 model_id=av_record.id,
                 amount=av_cost,
-                currency=(av_record.cost_estimate.currency
-                          if av_record.cost_estimate else "USD"),
+                currency=(
+                    av_record.cost_estimate.currency
+                    if av_record.cost_estimate
+                    else "USD"
+                ),
                 note=f"face animation × {secs:.1f}s",
             )
         )

@@ -375,9 +375,7 @@ def iter_render_scene(
     def _one_shot(shot: Shot) -> dict:
         env = envs_by_name.get(shot.environment)
         chars = tuple(
-            chars_by_name[name]
-            for name in shot.characters
-            if name in chars_by_name
+            chars_by_name[name] for name in shot.characters if name in chars_by_name
         )
         return render_shot(
             shot,

@@ -40,20 +40,27 @@ from .audio import text_to_speech
         "properties": {
             "image_url": {"type": "string"},
             "audio_url": {"type": "string"},
-            "prompt": {"type": "string",
-                       "description": "Direction (expression / acting note); "
-                       "ai-avatar requires it, omnihuman uses it as a hint."},
-            "quality": {"type": "string",
-                        "enum": ["balanced", "high"],
-                        "default": "balanced"},
+            "prompt": {
+                "type": "string",
+                "description": "Direction (expression / acting note); "
+                "ai-avatar requires it, omnihuman uses it as a hint.",
+            },
+            "quality": {
+                "type": "string",
+                "enum": ["balanced", "high"],
+                "default": "balanced",
+            },
             "model_id": {"type": "string"},
             "extra": {"type": "object"},
         },
     },
     output_schema={"type": "object", "description": "falaw.Result"},
     examples=(
-        {"image_url": "https://...", "audio_url": "https://...",
-         "prompt": "warm, attentive listener"},
+        {
+            "image_url": "https://...",
+            "audio_url": "https://...",
+            "prompt": "warm, attentive listener",
+        },
     ),
 )
 def animate_face(
@@ -102,9 +109,7 @@ def animate_face(
         },
     },
     output_schema={"type": "object", "description": "falaw.Result"},
-    examples=(
-        {"video_url": "https://...", "audio_url": "https://..."},
-    ),
+    examples=({"video_url": "https://...", "audio_url": "https://..."},),
 )
 def lipsync(
     video_url: str,
@@ -142,7 +147,10 @@ def lipsync(
             "avatar_quality": {"type": "string", "default": "balanced"},
         },
     },
-    output_schema={"type": "object", "description": "falaw.Result (talking-head video)"},
+    output_schema={
+        "type": "object",
+        "description": "falaw.Result (talking-head video)",
+    },
     examples=(
         {"text": "Welcome to the demo.", "image_url": "https://example.com/host.jpg"},
     ),

@@ -27,9 +27,7 @@ from dataclasses import dataclass
 from typing import Callable, Iterable, Literal, Optional
 
 
-EventKind = Literal[
-    "queued", "progress", "log", "done", "error", "cache_hit"
-]
+EventKind = Literal["queued", "progress", "log", "done", "error", "cache_hit"]
 
 EventCallback = Callable[["ProgressEvent"], None]
 
@@ -104,6 +102,4 @@ def emit(event: ProgressEvent, *, also: Iterable[EventCallback] = ()) -> None:
         except Exception as exc:  # pragma: no cover — defensive
             import warnings
 
-            warnings.warn(
-                f"falaw progress subscriber {cb!r} raised: {exc!r}"
-            )
+            warnings.warn(f"falaw progress subscriber {cb!r} raised: {exc!r}")
