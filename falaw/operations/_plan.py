@@ -124,6 +124,55 @@ def plan_edit_image(
 
 
 # ---------------------------------------------------------------------------
+# composite_character_in_environment (multi-reference image edit)
+# ---------------------------------------------------------------------------
+
+
+_DEFAULT_COMPOSITE_PROMPT = (
+    "Place the person from the first image into the scene from the second image. "
+    "Preserve the person's identity exactly (face, hair, build, age, clothing). "
+    "Match the environment's lighting, palette, and atmosphere. Photorealistic "
+    "composition; the person looks like they belong there."
+)
+
+
+def plan_composite_character_in_environment(
+    character_image_url: str,
+    environment_image_url: str,
+    *,
+    prompt: str = "",
+    quality: str = "balanced",
+    model_id: Optional[str] = None,
+    extra: Optional[dict] = None,
+    metadata: Optional[dict] = None,
+    consult_cache: bool = True,
+) -> CallPlan:
+    """Plan a :func:`falaw.composite_character_in_environment` call.
+
+    The character image anchors identity; the environment image anchors
+    location, lighting, palette. The default model is Flux Kontext dev.
+    """
+    application, record = _resolve_model_id_and_record(
+        model_id=model_id, category="image_edit", quality_tier=quality
+    )
+    arguments: dict = {
+        "image_url": character_image_url,
+        "image_urls": [character_image_url, environment_image_url],
+        "prompt": prompt or _DEFAULT_COMPOSITE_PROMPT,
+        **(extra or {}),
+    }
+    return make_call_plan(
+        tool="composite_character_in_environment",
+        application=application,
+        arguments=arguments,
+        output_kind="image",
+        estimated_cost_usd=_estimate_cost_with_record(record),
+        metadata=metadata,
+        consult_cache=consult_cache,
+    )
+
+
+# ---------------------------------------------------------------------------
 # image_to_video
 # ---------------------------------------------------------------------------
 

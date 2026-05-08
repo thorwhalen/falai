@@ -103,6 +103,95 @@ def edit_image(
 
 
 @register_tool(
+    name="composite_character_in_environment",
+    description=(
+        "Place a specific character into a specific environment as a single "
+        "still image, preserving the character's identity. Uses an image-edit "
+        "model that accepts multiple reference images (Flux Kontext, OmniGen v2, "
+        "SeedEdit). The character image anchors identity; the environment image "
+        "anchors location, lighting, and palette. Returns a falaw.Result with "
+        "the composited still."
+    ),
+    tags=("image", "edit", "composite"),
+    input_schema={
+        "type": "object",
+        "required": ["character_image_url", "environment_image_url"],
+        "properties": {
+            "character_image_url": {"type": "string"},
+            "environment_image_url": {"type": "string"},
+            "prompt": {
+                "type": "string",
+                "description": (
+                    "Optional directorial addendum: framing, action, mood. "
+                    "If omitted, a sensible default is used."
+                ),
+            },
+            "quality": {
+                "type": "string",
+                "enum": ["fast", "balanced", "high", "ultra"],
+                "default": "balanced",
+            },
+            "model_id": {"type": "string"},
+            "extra": {"type": "object"},
+        },
+    },
+    output_schema={"type": "object", "description": "falaw.Result"},
+    examples=(
+        {
+            "character_image_url": "https://x/thor.png",
+            "environment_image_url": "https://x/bell_tower.png",
+            "prompt": "Thor stands in the bell tower, contemplative gaze, candlelight on his face",
+            "quality": "high",
+        },
+    ),
+)
+def composite_character_in_environment(
+    character_image_url: str,
+    environment_image_url: str,
+    *,
+    prompt: str = "",
+    quality: str = "balanced",
+    model_id: Optional[str] = None,
+    extra: Optional[dict] = None,
+) -> Result:
+    """Place a character into an environment as one composited still.
+
+    The single most user-visible primitive missing from muvid (per
+    interface_design_plan item E). With this, an agent can produce
+    "Thor in a bell tower" — the character anchor for a downstream
+    omnihuman lipsync — without manually compositing in an image editor.
+
+    Defaults to ``fal-ai/flux-kontext/dev`` (image_edit category at
+    balanced/high tier). Pass ``model_id`` to override
+    (e.g. ``"fal-ai/flux-pro/kontext/max"`` for highest quality, or
+    ``"fal-ai/bytedance/seededit/v3/edit-image"`` for SeedEdit).
+    """
+    model = model_id or pick_model(category="image_edit", quality_tier=quality).id
+
+    if not prompt:
+        prompt = (
+            "Place the person from the first image into the scene from the "
+            "second image. Preserve the person's identity exactly (face, hair, "
+            "build, age, clothing). Match the environment's lighting, palette, "
+            "and atmosphere. Photorealistic composition; the person looks like "
+            "they belong there."
+        )
+
+    arguments = {
+        # Multi-reference argument — Flux Kontext, OmniGen v2 accept
+        # `image_urls` (plural). Some models use `image_url` for primary.
+        # Pass both for compatibility; the receiving model will use what it
+        # understands.
+        "image_url": character_image_url,
+        "image_urls": [character_image_url, environment_image_url],
+        "prompt": prompt,
+        **(extra or {}),
+    }
+    raw = call_fal(model, arguments)
+    return parse_response(raw, application=model, arguments=arguments)
+
+
+@register_tool(
     name="upscale_image",
     description=(
         "Upscale an image to higher resolution while preserving fidelity. "

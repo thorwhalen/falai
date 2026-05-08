@@ -7,6 +7,7 @@ so importing this package populates the ToolRegistry as a side effect.
 from .audio import text_to_speech, voice_clone  # noqa: F401
 from .avatar import animate_face, lipsync, talking_avatar_from_text  # noqa: F401
 from .images import (  # noqa: F401
+    composite_character_in_environment,
     edit_image,
     generate_image,
     remove_background,
@@ -35,6 +36,7 @@ from .video import image_to_video, text_to_video  # noqa: F401
 # Plan/Execute siblings: pure-data planning for the ops nw needs first.
 from ._plan import (  # noqa: F401
     plan_animate_face,
+    plan_composite_character_in_environment,
     plan_edit_image,
     plan_generate_image,
     plan_image_to_video,
