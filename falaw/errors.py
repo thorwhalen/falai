@@ -114,7 +114,9 @@ class FalServerError(FalHTTPError):
 class FalTimeout(FalError):
     """The fal call timed out before producing a result."""
 
-    def __init__(self, message: str, *, elapsed_s: float, application: str | None = None):
+    def __init__(
+        self, message: str, *, elapsed_s: float, application: str | None = None
+    ):
         super().__init__(message)
         self.elapsed_s = elapsed_s
         self.application = application
