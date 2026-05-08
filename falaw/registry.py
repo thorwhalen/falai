@@ -16,7 +16,7 @@ import os
 from functools import lru_cache
 from typing import Callable, Optional
 
-from .base import ModelRecord, ToolSpec
+from .base import CostEstimate, ModelRecord, ToolSpec
 
 _TOOLS: dict[str, ToolSpec] = {}
 
@@ -63,6 +63,10 @@ def _load_models() -> dict[str, ModelRecord]:
     for r in records:
         r = dict(r)
         r["aliases"] = tuple(r.get("aliases") or ())
+        ce = r.get("cost_estimate")
+        if isinstance(ce, dict):
+            r["cost_estimate"] = CostEstimate(**ce)
+        # else: None or already a CostEstimate — pass through unchanged.
         out[r["id"]] = ModelRecord(**r)
     return out
 

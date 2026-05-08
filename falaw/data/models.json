@@ -17,7 +17,14 @@
     ],
     "quality_tier": "balanced",
     "cost_hint": "medium",
-    "docs_url": "https://fal.ai/models/fal-ai/ai-avatar"
+    "docs_url": "https://fal.ai/models/fal-ai/ai-avatar",
+    "cost_estimate": {
+      "kind": "per_second",
+      "amount": 0.05,
+      "currency": "USD",
+      "notes": "Generic ai-avatar: ~$0.05/s when it works. Note: known to hang.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/bytedance/omnihuman/v1.5",
@@ -28,7 +35,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "high",
-    "docs_url": "https://fal.ai/models/fal-ai/bytedance/omnihuman/v1.5"
+    "docs_url": "https://fal.ai/models/fal-ai/bytedance/omnihuman/v1.5",
+    "cost_estimate": {
+      "kind": "per_second",
+      "amount": 0.1,
+      "currency": "USD",
+      "notes": "OmniHuman v1.5: high-quality avatar. Empirical: ~$0.50-1.50 for 5-15s clips \u2192 ~$0.10/s. Source: muvid_project costs.jsonl 2026-05-07.",
+      "source": "empirical"
+    }
   },
   {
     "id": "fal-ai/bria/background/remove",
@@ -59,7 +73,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "low",
-    "docs_url": "https://fal.ai/models/fal-ai/birefnet/v2"
+    "docs_url": "https://fal.ai/models/fal-ai/birefnet/v2",
+    "cost_estimate": {
+      "kind": "per_image",
+      "amount": 0.005,
+      "currency": "USD",
+      "notes": "BiRefNet v2: tiny per-image cost.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/flux/dev",
@@ -70,7 +91,14 @@
     ],
     "quality_tier": "balanced",
     "cost_hint": "low",
-    "docs_url": "https://fal.ai/models/fal-ai/flux/dev"
+    "docs_url": "https://fal.ai/models/fal-ai/flux/dev",
+    "cost_estimate": {
+      "kind": "per_megapixel",
+      "amount": 0.025,
+      "currency": "USD",
+      "notes": "Flux dev: ~$0.025/MP. Default 1024x1024 \u2248 $0.026/image.",
+      "source": "docs"
+    }
   },
   {
     "id": "fal-ai/ideogram/v3",
@@ -79,7 +107,14 @@
     "aliases": [],
     "quality_tier": "balanced",
     "cost_hint": "",
-    "docs_url": "https://fal.ai/models/fal-ai/ideogram/v3"
+    "docs_url": "https://fal.ai/models/fal-ai/ideogram/v3",
+    "cost_estimate": {
+      "kind": "per_image",
+      "amount": 0.06,
+      "currency": "USD",
+      "notes": "Ideogram v3: per-image pricing in the ~$0.06 range.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/recraft/v3/text-to-image",
@@ -99,7 +134,14 @@
     ],
     "quality_tier": "fast",
     "cost_hint": "very low",
-    "docs_url": "https://fal.ai/models/fal-ai/flux/schnell"
+    "docs_url": "https://fal.ai/models/fal-ai/flux/schnell",
+    "cost_estimate": {
+      "kind": "per_megapixel",
+      "amount": 0.003,
+      "currency": "USD",
+      "notes": "Flux schnell: cheapest tier; ~$0.003/MP.",
+      "source": "docs"
+    }
   },
   {
     "id": "fal-ai/hidream-i1-fast",
@@ -128,7 +170,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "medium",
-    "docs_url": "https://fal.ai/models/fal-ai/flux-pro/v1.1"
+    "docs_url": "https://fal.ai/models/fal-ai/flux-pro/v1.1",
+    "cost_estimate": {
+      "kind": "per_megapixel",
+      "amount": 0.04,
+      "currency": "USD",
+      "notes": "Flux Pro v1.1: ~$0.04/MP. Used by muvid environment-render quality=high.",
+      "source": "docs"
+    }
   },
   {
     "id": "fal-ai/flux-pro/v1.1-ultra",
@@ -159,7 +208,14 @@
     ],
     "quality_tier": "balanced",
     "cost_hint": "low",
-    "docs_url": "https://fal.ai/models/fal-ai/flux-kontext/dev"
+    "docs_url": "https://fal.ai/models/fal-ai/flux-kontext/dev",
+    "cost_estimate": {
+      "kind": "per_image",
+      "amount": 0.04,
+      "currency": "USD",
+      "notes": "Flux Kontext dev: image edit/composite. Per-image pricing.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/omnigen-v2",
@@ -201,7 +257,14 @@
     ],
     "quality_tier": "balanced",
     "cost_hint": "medium",
-    "docs_url": "https://fal.ai/models/fal-ai/minimax/hailuo-02/pro/image-to-video"
+    "docs_url": "https://fal.ai/models/fal-ai/minimax/hailuo-02/pro/image-to-video",
+    "cost_estimate": {
+      "kind": "per_call",
+      "amount": 0.5,
+      "currency": "USD",
+      "notes": "Hailuo Pro: per-clip pricing (~$0.50/clip), NOT per-second. Output is fixed ~5.87s regardless of requested duration. Use per_call kind.",
+      "source": "docs"
+    }
   },
   {
     "id": "fal-ai/pixverse/v4.5/image-to-video",
@@ -336,7 +399,14 @@
     ],
     "quality_tier": "ultra",
     "cost_hint": "very high",
-    "docs_url": "https://fal.ai/models/fal-ai/veo3"
+    "docs_url": "https://fal.ai/models/fal-ai/veo3",
+    "cost_estimate": {
+      "kind": "per_second",
+      "amount": 0.5,
+      "currency": "USD",
+      "notes": "Veo 3 (Google): premium text-to-video, ~$0.50/s.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/flux-lora-portrait-trainer",
@@ -374,7 +444,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "medium",
-    "docs_url": "https://fal.ai/models/fal-ai/elevenlabs/tts/multilingual-v2"
+    "docs_url": "https://fal.ai/models/fal-ai/elevenlabs/tts/multilingual-v2",
+    "cost_estimate": {
+      "kind": "per_token",
+      "amount": 0.00018,
+      "currency": "USD",
+      "notes": "ElevenLabs Multilingual v2: ~$0.18/1k chars \u2248 $0.00018/char. Treat 'tokens' as character count when billing on text length.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/minimax/speech-02-hd",
@@ -396,7 +473,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "low",
-    "docs_url": "https://fal.ai/models/fal-ai/clarity-upscaler"
+    "docs_url": "https://fal.ai/models/fal-ai/clarity-upscaler",
+    "cost_estimate": {
+      "kind": "per_megapixel",
+      "amount": 0.05,
+      "currency": "USD",
+      "notes": "Clarity upscaler: priced by output megapixels.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/minimax/voice-clone",

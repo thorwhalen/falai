@@ -226,3 +226,51 @@ def cost_line(kind, item_id, amount):
         kind=kind, item_id=item_id, model_id="m",
         amount=amount, currency="USD",
     )
+
+
+# --- Regression: actively-used models have populated cost_estimate ----------
+
+
+def test_priced_models_loaded_from_data_json():
+    """Selected models in data/models.json must have a populated cost_estimate."""
+    from falaw.registry import _load_models
+
+    _load_models.cache_clear()
+    models = _load_models()
+    must_be_priced = {
+        "fal-ai/flux/dev",
+        "fal-ai/flux-pro/v1.1",
+        "fal-ai/bytedance/omnihuman/v1.5",
+        "fal-ai/minimax/hailuo-02/pro/image-to-video",
+    }
+    for mid in must_be_priced:
+        assert mid in models, f"{mid} missing from models.json"
+        assert models[mid].cost_estimate is not None, (
+            f"{mid} has no cost_estimate populated — agents can't budget without it"
+        )
+
+
+def test_hailuo_uses_per_call_pricing():
+    """Hailuo Pro is priced per-clip (fixed ~5.87s output), not per-second."""
+    from falaw.registry import _load_models
+
+    _load_models.cache_clear()
+    hailuo = _load_models()["fal-ai/minimax/hailuo-02/pro/image-to-video"]
+    assert hailuo.cost_estimate is not None
+    assert hailuo.cost_estimate.kind == "per_call"
+    cost = estimate_call_cost(hailuo)
+    assert cost is not None and cost > 0
+
+
+def test_omnihuman_per_second_pricing_matches_empirical():
+    """OmniHuman cost matches the empirical observation: 8s ≈ $0.80."""
+    from falaw.registry import _load_models
+
+    _load_models.cache_clear()
+    omni = _load_models()["fal-ai/bytedance/omnihuman/v1.5"]
+    assert omni.cost_estimate is not None
+    assert omni.cost_estimate.kind == "per_second"
+    cost = estimate_call_cost(omni, seconds=8.0)
+    assert cost is not None
+    # Allow ±25% wiggle: this is ground for fluctuation in fal pricing.
+    assert 0.6 < cost < 1.0
