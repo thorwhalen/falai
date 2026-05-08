@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>falaw.operations.render &mdash; falaw 0.0.7 documentation</title>
+  <title>falaw.operations.render &mdash; falaw 0.0.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../../_static/documentation_options.js?v=53b53b71"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -205,9 +205,22 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">tts_quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
     <span class="n">lipsync_quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+    <span class="n">tts_model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">avatar_model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render one Beat to a lipsynced video. Returns a small manifest dict.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render one Beat to a lipsynced video. Returns a small manifest dict.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tts_model_id: Override the TTS model. When provided, takes precedence</span>
+<span class="sd">            over the character&#39;s voice.model_id and over ``tts_quality``-based</span>
+<span class="sd">            ``pick_model``. Use this to force a specific TTS engine for one</span>
+<span class="sd">            beat (e.g. eleven-v3 for emotional delivery, multilingual-v2 for</span>
+<span class="sd">            consistency).</span>
+<span class="sd">        avatar_model_id: Override the avatar/lipsync model (e.g.</span>
+<span class="sd">            ``&quot;fal-ai/bytedance/omnihuman/v1.5&quot;`` to bypass the default</span>
+<span class="sd">            ``ai-avatar`` which is known to hang).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">beat</span><span class="o">.</span><span class="n">line</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">beat</span><span class="o">.</span><span class="n">action</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -229,7 +242,7 @@
     <span class="n">video_url</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">beat</span><span class="o">.</span><span class="n">line</span><span class="p">:</span>
-        <span class="n">tts_model</span> <span class="o">=</span> <span class="n">_picked_tts_model</span><span class="p">(</span><span class="n">character</span><span class="p">,</span> <span class="n">quality</span><span class="o">=</span><span class="n">tts_quality</span><span class="p">)</span>
+        <span class="n">tts_model</span> <span class="o">=</span> <span class="n">tts_model_id</span> <span class="ow">or</span> <span class="n">_picked_tts_model</span><span class="p">(</span><span class="n">character</span><span class="p">,</span> <span class="n">quality</span><span class="o">=</span><span class="n">tts_quality</span><span class="p">)</span>
         <span class="n">tts_args</span> <span class="o">=</span> <span class="n">_tts_arguments</span><span class="p">(</span><span class="n">character</span><span class="p">,</span> <span class="n">beat</span><span class="o">.</span><span class="n">line</span><span class="p">)</span>
         <span class="n">tts_raw</span> <span class="o">=</span> <span class="n">cached_call_fal</span><span class="p">(</span><span class="n">tts_model</span><span class="p">,</span> <span class="n">tts_args</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
         <span class="n">tts_result</span> <span class="o">=</span> <span class="n">parse_response</span><span class="p">(</span><span class="n">tts_raw</span><span class="p">,</span> <span class="n">application</span><span class="o">=</span><span class="n">tts_model</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">tts_args</span><span class="p">)</span>
@@ -243,7 +256,7 @@
         <span class="c1"># `avatar` category = image+audio → talking video (the right primitive</span>
         <span class="c1"># for &quot;still face speaks line&quot;). `lipsync` category requires an</span>
         <span class="c1"># existing video, which we don&#39;t have here.</span>
-        <span class="n">av_model</span> <span class="o">=</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;avatar&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">lipsync_quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">av_model</span> <span class="o">=</span> <span class="n">avatar_model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;avatar&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">lipsync_quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
         <span class="c1"># ai-avatar requires a non-empty `prompt`; omnihuman accepts one.</span>
         <span class="c1"># Use beat.emotion / beat.action as the directorial hint; fall back</span>
         <span class="c1"># to a neutral default so the schema is satisfied.</span>
@@ -309,9 +322,18 @@
     <span class="n">style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">as_video</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">quality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
+    <span class="n">image_model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">image_to_video_model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render a Shot as a still (default) or a short clip.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render a Shot as a still (default) or a short clip.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image_model_id: Override the image-gen model used for the storyboard</span>
+<span class="sd">            still (defaults to ``pick_model(category=&quot;image&quot;, …)``).</span>
+<span class="sd">        image_to_video_model_id: Override the image-to-video model used when</span>
+<span class="sd">            ``as_video=True`` (e.g. ``&quot;fal-ai/minimax/hailuo-02/pro/image-to-video&quot;``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">h</span> <span class="o">=</span> <span class="n">shot_content_hash</span><span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">environment</span><span class="o">=</span><span class="n">environment</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;-v&quot;</span> <span class="k">if</span> <span class="n">as_video</span> <span class="k">else</span> <span class="s2">&quot;-i&quot;</span><span class="p">)</span>
     <span class="n">cache_app</span> <span class="o">=</span> <span class="s2">&quot;falaw.render_shot&quot;</span>
     <span class="n">cache_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hash&quot;</span><span class="p">:</span> <span class="n">h</span><span class="p">,</span> <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="n">quality</span><span class="p">}</span>
@@ -335,7 +357,7 @@
         <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;style: </span><span class="si">{</span><span class="n">style</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
 
-    <span class="n">img_model</span> <span class="o">=</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">img_model</span> <span class="o">=</span> <span class="n">image_model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
     <span class="n">img_raw</span> <span class="o">=</span> <span class="n">cached_call_fal</span><span class="p">(</span>
         <span class="n">img_model</span><span class="p">,</span>
         <span class="p">{</span><span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span> <span class="s2">&quot;image_size&quot;</span><span class="p">:</span> <span class="s2">&quot;landscape_16_9&quot;</span><span class="p">},</span>
@@ -362,7 +384,7 @@
         <span class="k">return</span> <span class="n">manifest</span>
 
     <span class="c1"># image -&gt; video</span>
-    <span class="n">i2v_model</span> <span class="o">=</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;image_to_video&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">i2v_model</span> <span class="o">=</span> <span class="n">image_to_video_model_id</span> <span class="ow">or</span> <span class="n">pick_model</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;image_to_video&quot;</span><span class="p">,</span> <span class="n">quality_tier</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
     <span class="n">i2v_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="n">still_url</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">shot</span><span class="o">.</span><span class="n">camera</span><span class="p">:</span>
         <span class="n">i2v_args</span><span class="p">[</span><span class="s2">&quot;prompt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shot</span><span class="o">.</span><span class="n">camera</span>
