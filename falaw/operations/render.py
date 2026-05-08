@@ -150,7 +150,10 @@ def render_beat(
         # `avatar` category = image+audio → talking video (the right primitive
         # for "still face speaks line"). `lipsync` category requires an
         # existing video, which we don't have here.
-        av_model = avatar_model_id or pick_model(category="avatar", quality_tier=lipsync_quality).id
+        av_model = (
+            avatar_model_id
+            or pick_model(category="avatar", quality_tier=lipsync_quality).id
+        )
         # ai-avatar requires a non-empty `prompt`; omnihuman accepts one.
         # Use beat.emotion / beat.action as the directorial hint; fall back
         # to a neutral default so the schema is satisfied.
@@ -275,7 +278,10 @@ def render_shot(
         return manifest
 
     # image -> video
-    i2v_model = image_to_video_model_id or pick_model(category="image_to_video", quality_tier=quality).id
+    i2v_model = (
+        image_to_video_model_id
+        or pick_model(category="image_to_video", quality_tier=quality).id
+    )
     i2v_args: dict = {"image_url": still_url}
     if shot.camera:
         i2v_args["prompt"] = shot.camera
