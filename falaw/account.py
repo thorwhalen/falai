@@ -28,9 +28,11 @@ from dataclasses import dataclass
 from .errors import _LOCK_PATTERNS
 
 
-_DEFAULT_PROBE_URL = "https://rest.alpha.fal.ai/storage/auth/token"
-"""Endpoint used by fal_client for upload tokens — small, idempotent, requires
-auth, and reflects account health (returns 403 on lock, 401 on bad key)."""
+_DEFAULT_PROBE_URL = "https://rest.fal.ai/storage/auth/token?storage_type=fal-cdn-v3"
+"""Endpoint used by fal_client for upload tokens (storage_type=fal-cdn-v3 as
+of fal-client 2025; the older 'fal-cdn' value rejects healthy accounts).
+Small, idempotent, requires auth, and reflects account health (returns 403
+on lock, 401 on bad key)."""
 
 
 @dataclass(frozen=True)
