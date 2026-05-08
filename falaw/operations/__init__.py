@@ -31,3 +31,12 @@ from .render import (  # noqa: F401
     render_shot,
 )
 from .video import image_to_video, text_to_video  # noqa: F401
+
+# Plan/Execute siblings: pure-data planning for the ops nw needs first.
+from ._plan import (  # noqa: F401
+    plan_animate_face,
+    plan_edit_image,
+    plan_generate_image,
+    plan_image_to_video,
+    plan_lipsync,
+)

@@ -188,7 +188,14 @@
     ],
     "quality_tier": "ultra",
     "cost_hint": "high",
-    "docs_url": "https://fal.ai/models/fal-ai/flux-pro/v1.1-ultra"
+    "docs_url": "https://fal.ai/models/fal-ai/flux-pro/v1.1-ultra",
+    "cost_estimate": {
+      "kind": "per_megapixel",
+      "amount": 0.06,
+      "currency": "USD",
+      "notes": "Flux Pro Ultra: ~$0.06/MP (estimate; verify on next billing audit).",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/imagen4/preview/ultra",
@@ -235,7 +242,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "medium",
-    "docs_url": "https://fal.ai/models/fal-ai/bytedance/seededit/v3/edit-image"
+    "docs_url": "https://fal.ai/models/fal-ai/bytedance/seededit/v3/edit-image",
+    "cost_estimate": {
+      "kind": "per_image",
+      "amount": 0.05,
+      "currency": "USD",
+      "notes": "ByteDance SeedEdit v3: ~$0.05/edit.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/flux-pro/kontext/max",
@@ -246,7 +260,14 @@
     ],
     "quality_tier": "ultra",
     "cost_hint": "high",
-    "docs_url": "https://fal.ai/models/fal-ai/flux-pro/kontext/max"
+    "docs_url": "https://fal.ai/models/fal-ai/flux-pro/kontext/max",
+    "cost_estimate": {
+      "kind": "per_image",
+      "amount": 0.1,
+      "currency": "USD",
+      "notes": "Flux Pro Kontext Max: highest-tier edit; ~$0.10/edit.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/minimax/hailuo-02/pro/image-to-video",
@@ -284,7 +305,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "high",
-    "docs_url": "https://fal.ai/models/fal-ai/bytedance/seedance/v1/pro/image-to-video"
+    "docs_url": "https://fal.ai/models/fal-ai/bytedance/seedance/v1/pro/image-to-video",
+    "cost_estimate": {
+      "kind": "per_second",
+      "amount": 0.2,
+      "currency": "USD",
+      "notes": "Seedance Pro i2v: ~$0.20/s (estimate; high tier).",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/kling-video/v2.1/master/image-to-video",
@@ -295,7 +323,14 @@
     ],
     "quality_tier": "ultra",
     "cost_hint": "high",
-    "docs_url": "https://fal.ai/models/fal-ai/kling-video/v2.1/master/image-to-video"
+    "docs_url": "https://fal.ai/models/fal-ai/kling-video/v2.1/master/image-to-video",
+    "cost_estimate": {
+      "kind": "per_second",
+      "amount": 0.35,
+      "currency": "USD",
+      "notes": "Kling 2.1 master i2v: ~$0.35/s (ultra tier).",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/ai-avatar/multi",
@@ -304,7 +339,14 @@
     "aliases": [],
     "quality_tier": "balanced",
     "cost_hint": "",
-    "docs_url": "https://fal.ai/models/fal-ai/ai-avatar/multi"
+    "docs_url": "https://fal.ai/models/fal-ai/ai-avatar/multi",
+    "cost_estimate": {
+      "kind": "per_second",
+      "amount": 0.05,
+      "currency": "USD",
+      "notes": "ai-avatar multi: ~$0.05/s. Same hang-warning as ai-avatar.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/kling-video/lipsync/audio-to-video",
@@ -326,7 +368,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "medium",
-    "docs_url": "https://fal.ai/models/fal-ai/sync-lipsync/v2"
+    "docs_url": "https://fal.ai/models/fal-ai/sync-lipsync/v2",
+    "cost_estimate": {
+      "kind": "per_second",
+      "amount": 0.1,
+      "currency": "USD",
+      "notes": "Sync Lipsync v2: ~$0.10/s for clip re-sync.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/any-llm",
@@ -388,7 +437,14 @@
     ],
     "quality_tier": "high",
     "cost_hint": "high",
-    "docs_url": "https://fal.ai/models/fal-ai/bytedance/seedance/v1/pro/text-to-video"
+    "docs_url": "https://fal.ai/models/fal-ai/bytedance/seedance/v1/pro/text-to-video",
+    "cost_estimate": {
+      "kind": "per_second",
+      "amount": 0.2,
+      "currency": "USD",
+      "notes": "Seedance Pro t2v: ~$0.20/s.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/veo3",
