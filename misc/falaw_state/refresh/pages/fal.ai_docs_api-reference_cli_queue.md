@@ -23,7 +23,8 @@ Commands:
 ## Size
 
 ```bash theme={null}
-Usage: fal queue size [-h] [--output {pretty,json}] [--json] [--team TEAM] app_name
+Usage: fal queue size [-h] [--output {pretty,json}] [--json] [--team TEAM]
+                      [--by-user] app_name
 
 Get queue size for an application.
 
@@ -33,6 +34,7 @@ Positional Arguments:
 Options:
   -h, --help            show this help message and exit
   --team TEAM           The team to use.
+  --by-user             Group queue size by user.
 
 Output:
   --output {pretty,json}
@@ -43,14 +45,16 @@ Output:
 ## Flush
 
 ```bash theme={null}
-Usage: fal queue flush [-h] [--team TEAM] app_name
+Usage: fal queue flush [-h] [--team TEAM] [--caller-user-id CALLER_USER_ID] app_name
 
 Flush all pending requests in an application queue.
 
 Positional Arguments:
-  app_name     Application name.
+  app_name              Application name.
 
 Options:
-  -h, --help   show this help message and exit
-  --team TEAM  The team to use.
+  -h, --help            show this help message and exit
+  --team TEAM           The team to use.
+  --caller-user-id CALLER_USER_ID
+                        Only flush requests from this user ID. If not provided, all requests will be flushed.
 ```

@@ -118,17 +118,31 @@ Options:
 # fal apps list
 
 ```bash theme={null}
-Usage: fal apps list [-h] [--debug] [--pdb] [--cprofile] [--env ENV]
+Usage: fal apps list [-h] [--debug] [--pdb] [--cprofile]
+                     [--sort-by-runners] [--filter FILTER]
+                     [--env ENV] [--regions REGIONS [REGIONS ...]]
+                     [--output {pretty,json}] [--json]
 
 List applications.
 
 Options:
-  -h, --help  show this help message and exit
-  --env ENV   Target environment (defaults to main).
+  -h, --help            show this help message and exit
+  --sort-by-runners     Sort by number of runners ascending.
+  --filter FILTER       Filter applications by alias contents.
+  --env ENV             Target environment (defaults to main).
+  --regions REGIONS [REGIONS ...]
+                        Valid regions (pass several items to filter on multiple).
+
+Output:
+  --output {pretty,json}
+                        Modify the command output
+  --json                Output in JSON format (same as --output json)
 
 Examples:
   fal apps list
   fal apps list --env staging
+  fal apps list --filter myapp --sort-by-runners
+  fal apps list --json
 ```
 
 
@@ -339,6 +353,9 @@ Usage: fal apps scale [-h] [--debug] [--pdb] [--cprofile]
                       [--max-multiplexing MAX_MULTIPLEXING]
                       [--max-concurrency MAX_CONCURRENCY]
                       [--min-concurrency MIN_CONCURRENCY]
+                      [--concurrency-buffer CONCURRENCY_BUFFER]
+                      [--concurrency-buffer-perc CONCURRENCY_BUFFER_PERC]
+                      [--scaling-delay SCALING_DELAY]
                       [--request-timeout REQUEST_TIMEOUT]
                       [--startup-timeout STARTUP_TIMEOUT]
                       [--machine-types MACHINE_TYPES [MACHINE_TYPES ...]]
@@ -361,8 +378,14 @@ Options:
                         Maximum concurrency.
   --min-concurrency MIN_CONCURRENCY
                         Minimum concurrency
+  --concurrency-buffer CONCURRENCY_BUFFER
+                        Concurrency buffer (minimum extra capacity).
+  --concurrency-buffer-perc CONCURRENCY_BUFFER_PERC
+                        Concurrency buffer expressed as a percentage.
+  --scaling-delay SCALING_DELAY
+                        Scaling delay (seconds).
   --request-timeout REQUEST_TIMEOUT
-                        Request timeout (seconds).
+                        Request timeout (seconds). If a request takes longer, it is aborted and the runner gracefully stopped as it could be in a bad state.
   --startup-timeout STARTUP_TIMEOUT
                         Startup timeout (seconds).
   --machine-types MACHINE_TYPES [MACHINE_TYPES ...]
@@ -442,22 +465,28 @@ Commands:
 
 ```bash theme={null}
 Usage: fal auth login [-h] [--debug] [--pdb] [--cprofile]
+                      [--connection CONNECTION] [--no-browser]
 
 Log in a user.
 
 Options:
-  -h, --help  show this help message and exit
+  -h, --help               show this help message and exit
+  --connection CONNECTION  Auth connection (e.g. github, google, or an SSO domain). Skips the interactive prompt.
+  --no-browser             Don't attempt to open a browser. Just print the URL to visit.
 ```
+
+When `--connection` is omitted, the CLI prompts you to choose between GitHub, Google, or your enterprise SSO domain. The previously used choice is remembered and offered as the default on subsequent logins.
 
 ## Logout
 
 ```bash theme={null}
-Usage: fal auth logout [-h] [--debug] [--pdb] [--cprofile]
+Usage: fal auth logout [-h] [--debug] [--pdb] [--cprofile] [--no-browser]
 
 Log out the currently logged-in user.
 
 Options:
-  -h, --help  show this help message and exit
+  -h, --help    show this help message and exit
+  --no-browser  Don't attempt to open a browser. Just print the URL to visit.
 ```
 
 ## Whoami
@@ -509,13 +538,13 @@ Options:
 ```bash theme={null}
 Usage: fal deploy [-h] [--output {pretty,json}] [--json] [--team TEAM] [--app-name APP_NAME]
                   [--auth AUTH] [--strategy {recreate,rolling}] [--no-scale] [--reset-scale]
-                  [--no-cache] [--env ENV]
+                  [--check] [--yes] [--no-cache] [--env ENV]
                   [app_ref]
 
-Deploy a fal application. If no app reference is provided, the command will look for a pyproject.toml file with a  section and deploy the application specified with the provided app name.
+Deploy a fal application. If no app reference is provided, the command will look for a pyproject.toml file with a [tool.fal.apps] section and deploy the application specified with the provided app name.
 
 Positional Arguments:
-  app_ref               Application reference. Either a file path or a file path and a function name separated by '::'. If no reference is provided, the command will look for a pyproject.toml file with a  section and deploy the application specified with the provided app name.
+  app_ref               Application reference. Either a file path or a file path and a function name separated by '::'. If no reference is provided, the command will look for a pyproject.toml file with a [tool.fal.apps] section and deploy the application specified with the provided app name.
                         File path example: path/to/myfile.py::MyApp
                         App name example: my-app (configure team in pyproject.toml)
 
@@ -523,13 +552,15 @@ Options:
   -h, --help            show this help message and exit
   --team TEAM           The team to use.
   --app-name APP_NAME   Application name to deploy with.
-  --auth AUTH           Application authentication mode (private, public).
+  --auth AUTH           Application authentication mode (private, public, shared).
   --strategy {recreate,rolling}
                         Deployment strategy.
   --no-scale            Use the previous deployment of the application for scale settings. This is the default behavior.
   --reset-scale         Use the application code for scale settings.
+  --check               Show a pre-deployment summary before deploying. Prompts for confirmation unless --yes is also set.
+  --yes                 Skip interactive deploy confirmation prompts. When combined with --check, the summary is still shown.
   --no-cache            Do not use the cache for the environment build.
-  --env ENV             Target environment (defaults to main).
+  --env ENV             Target environment (defaults to main). Can also be set via FAL_ENV environment variable.
 
 Output:
   --output {pretty,json}
@@ -541,6 +572,8 @@ Examples:
   fal deploy path/to/myfile.py
   fal deploy path/to/myfile.py::MyApp
   fal deploy path/to/myfile.py::MyApp --app-name myapp --auth public
+  fal deploy path/to/myfile.py::MyApp --check
+  fal deploy path/to/myfile.py::MyApp --check --yes
   fal deploy path/to/myfile.py::MyApp --env staging
   fal deploy my-app
 ```
@@ -556,12 +589,20 @@ Examples:
 
 ```bash theme={null}
 Usage: fal doctor [-h] [--debug] [--pdb] [--cprofile]
+                  [--output {pretty,json}] [--json]
 
 fal version and misc environment information.
 
 Options:
-  -h, --help  show this help message and exit
+  -h, --help            show this help message and exit
+
+Output:
+  --output {pretty,json}
+                        Modify the command output
+  --json                Output in JSON format (same as --output json)
 ```
+
+Outputs the installed `fal` and `isolate` versions, the Python version and platform, and the configured `FAL_HOST` and the prefix of the active `FAL_KEY`. Useful when filing bug reports.
 
 
 # https://fal.ai/docs/api-reference/cli/environments.md
@@ -839,20 +880,23 @@ fal auth login
 
 ## Commands
 
-| Command                                     | Description            |
-| ------------------------------------------- | ---------------------- |
-| [`fal auth`](/api-reference/cli/auth)       | Authenticate with fal  |
-| [`fal deploy`](/api-reference/cli/deploy)   | Deploy an application  |
-| [`fal run`](/api-reference/cli/run)         | Run a function         |
-| [`fal apps`](/api-reference/cli/apps/list)  | Manage applications    |
-| [`fal keys`](/api-reference/cli/keys)       | Manage API keys        |
-| [`fal secrets`](/api-reference/cli/secrets) | Manage secrets         |
-| [`fal files`](/api-reference/cli/files)     | Manage files in /data  |
-| [`fal queue`](/api-reference/cli/queue)     | Manage queued requests |
-| [`fal runners`](/api-reference/cli/runners) | Manage runners         |
-| [`fal doctor`](/api-reference/cli/doctor)   | Diagnose issues        |
-| [`fal create`](/api-reference/cli/create)   | Create a new project   |
-| [`fal profile`](/api-reference/cli/profile) | Manage profiles        |
+| Command                                               | Description                      |
+| ----------------------------------------------------- | -------------------------------- |
+| [`fal auth`](/api-reference/cli/auth)                 | Authenticate with fal            |
+| [`fal deploy`](/api-reference/cli/deploy)             | Deploy an application            |
+| [`fal run`](/api-reference/cli/run)                   | Run a function                   |
+| [`fal apps`](/api-reference/cli/apps/list)            | Manage applications              |
+| [`fal environments`](/api-reference/cli/environments) | Manage environments              |
+| [`fal keys`](/api-reference/cli/keys)                 | Manage API keys                  |
+| [`fal secrets`](/api-reference/cli/secrets)           | Manage secrets                   |
+| [`fal files`](/api-reference/cli/files)               | Manage files in /data            |
+| [`fal queue`](/api-reference/cli/queue)               | Manage queued requests           |
+| [`fal runners`](/api-reference/cli/runners)           | Manage runners                   |
+| [`fal api`](/api-reference/cli/api)                   | Call a fal API endpoint directly |
+| [`fal account`](/api-reference/cli/teams)             | Manage accounts                  |
+| [`fal doctor`](/api-reference/cli/doctor)             | Diagnose issues                  |
+| [`fal create`](/api-reference/cli/create)             | Create a new project             |
+| [`fal profile`](/api-reference/cli/profile)           | Manage profiles                  |
 
 
 # https://fal.ai/docs/api-reference/cli/installation.md
@@ -1040,6 +1084,68 @@ To delete a profile, use the `fal profile delete` command followed by the profil
 Profile example deleted.
 ```
 
+## Command Reference
+
+```bash theme={null}
+Usage: fal profile [-h] command ...
+
+Profile management.
+
+Commands:
+  command
+    list      List all profiles.
+    set       Set default profile. If the profile doesn't exist, you'll be prompted to create it.
+    unset     Unset default profile.
+    key       Set key for profile.
+    host      Set fal host.
+    create    Create a new profile.
+    delete    Delete profile.
+```
+
+<Note>
+  `fal profiles` is an alias for `fal profile`.
+</Note>
+
+### create
+
+Create a new named profile and set it as the default:
+
+```bash theme={null}
+fal profile create <PROFILE>
+```
+
+If the profile already exists the command is a no-op. After creation you'll typically run `fal profile key` to attach an API key.
+
+### unset
+
+Clear the default profile selection:
+
+```bash theme={null}
+fal profile unset
+```
+
+After unsetting, `fal` falls back to environment variables (`FAL_KEY`, `FAL_HOST`).
+
+### host
+
+Override the fal API host for the active profile. Most users don't need this — it's primarily useful for self-hosted or staging deployments:
+
+```bash theme={null}
+fal profile host <HOST>
+```
+
+### list
+
+```bash theme={null}
+Usage: fal profile list [-h] [--output {pretty,json}] [--json]
+```
+
+Supports JSON output for scripting:
+
+```bash theme={null}
+fal profile list --json
+```
+
 
 # https://fal.ai/docs/api-reference/cli/queue.md
 
@@ -1068,7 +1174,8 @@ Commands:
 ## Size
 
 ```bash theme={null}
-Usage: fal queue size [-h] [--output {pretty,json}] [--json] [--team TEAM] app_name
+Usage: fal queue size [-h] [--output {pretty,json}] [--json] [--team TEAM]
+                      [--by-user] app_name
 
 Get queue size for an application.
 
@@ -1078,6 +1185,7 @@ Positional Arguments:
 Options:
   -h, --help            show this help message and exit
   --team TEAM           The team to use.
+  --by-user             Group queue size by user.
 
 Output:
   --output {pretty,json}
@@ -1088,16 +1196,18 @@ Output:
 ## Flush
 
 ```bash theme={null}
-Usage: fal queue flush [-h] [--team TEAM] app_name
+Usage: fal queue flush [-h] [--team TEAM] [--caller-user-id CALLER_USER_ID] app_name
 
 Flush all pending requests in an application queue.
 
 Positional Arguments:
-  app_name     Application name.
+  app_name              Application name.
 
 Options:
-  -h, --help   show this help message and exit
-  --team TEAM  The team to use.
+  -h, --help            show this help message and exit
+  --team TEAM           The team to use.
+  --caller-user-id CALLER_USER_ID
+                        Only flush requests from this user ID. If not provided, all requests will be flushed.
 ```
 
 
@@ -1111,33 +1221,48 @@ Options:
 
 ```bash theme={null}
 Usage: fal run [-h] [--team TEAM] [--no-cache] [--app-name APP_NAME]
-               [--auth AUTH] [--env ENV] func_ref
+               [--auth AUTH] [--env ENV] [--local]
+               [--machine-type MACHINE_TYPE]
+               [--limit-max-requests LIMIT_MAX_REQUESTS]
+               func_ref
 
 Run fal function.
 
 Positional Arguments:
-  func_ref             Function reference. Configure team in pyproject.toml for app names.
+  func_ref              Function reference. Configure team in pyproject.toml for app names.
 
 Options:
-  -h, --help           show this help message and exit
-  --team TEAM          The team to use.
-  --no-cache           Do not use the cache for the environment build.
-  --app-name APP_NAME  Application name to run with.
-  --auth AUTH          Application authentication mode (private, public), defaults to public.
-  --env ENV            Target environment (defaults to main).
+  -h, --help            show this help message and exit
+  --team TEAM           The team to use.
+  --no-cache            Do not use the cache for the environment build.
+  --app-name APP_NAME   Application name to run with.
+  --auth AUTH           Application authentication mode (private, public, shared), defaults to public.
+  --env ENV             Target environment (defaults to main).
+  --local               Run locally without serverless.
+  --machine-type MACHINE_TYPE
+                        Machine type to use for this run.
+  --limit-max-requests LIMIT_MAX_REQUESTS
+                        For fal.App runs, gracefully stop the server after serving N requests.
 
 Examples:
   fal run path/to/myfile.py::myfunc
   fal run path/to/myfile.py::myfunc --env staging
   fal run path/to/myfile.py::MyApp --auth private
+  fal run path/to/myfile.py::MyApp --local
+  fal run path/to/myfile.py::MyApp --machine-type GPU-A100
 ```
+
+<Warning>
+  `fal run` ignores the `auth` set on `fal.App` and in `pyproject.toml` and defaults to `public` so the app is reachable for testing. Pass `--auth` to override. In a future major release the default will become `private` and the `fal.App`/`pyproject.toml` value will be respected.
+</Warning>
 
 ## Authentication Modes
 
 The `--auth` flag controls who can access your app while it's running:
 
-* **`public`** (default): Anyone can call your app without authentication. You pay for all usage.
+* **`public`** (default for `fal run`): Anyone can call your app without authentication. You pay for all usage.
 * **`private`**: Only you (or your team) can call the app. Requires a valid API key.
+* **`shared`**: Any authenticated fal user can call the app.
 
 By default, `fal run` uses `public` mode for easy testing during development.
 
@@ -1164,7 +1289,8 @@ Commands:
     kill        Kill a runner.
     list        List runners.
     logs (log)  Show logs for a runner.
-    shell       Open an interactive shell in a runner.
+    shell       Open a shell on a runner.
+    exec        Execute a command on a runner.
 ```
 
 ## List
@@ -1294,6 +1420,40 @@ fal runners shell runner_abc123xyz
 
 Once connected, you have full shell access within the runner's container environment. Press `Ctrl+D` or type `exit` to disconnect.
 
+## Exec
+
+Run a one-off command on a runner without opening an interactive shell.
+
+```bash theme={null}
+Usage: fal runners exec [-h] [--team TEAM] [-it] id [command ...]
+
+Execute a command on a runner.
+
+Positional Arguments:
+  id                  Runner ID.
+  command             Command to execute (after `--`).
+
+Options:
+  -h, --help          show this help message and exit
+  --team TEAM         The team to use.
+  -it, --interactive  Allocate a TTY and attach stdin (interactive mode).
+```
+
+The command and its arguments are passed after a `--` separator so they aren't parsed as flags by the `fal` CLI.
+
+### Examples
+
+```bash theme={null}
+# Print environment variables on the runner
+fal runners exec runner_abc123xyz -- env
+
+# Tail an arbitrary log file inside the container
+fal runners exec runner_abc123xyz -- tail -f /var/log/my-app.log
+
+# Run an interactive Python REPL
+fal runners exec runner_abc123xyz -it -- python
+```
+
 
 # https://fal.ai/docs/api-reference/cli/secrets.md
 
@@ -1384,57 +1544,57 @@ Examples:
 > Fetch the complete documentation index at: https://fal.ai/docs/llms.txt
 > Use this file to discover all available pages before exploring further.
 
-# fal teams
+# fal account
 
-Manage and switch between teams you belong to. Useful when you're a member of multiple teams and need to deploy or manage apps under a specific team account.
+Manage and switch between the personal, team, and organization accounts you belong to. Useful when you're a member of multiple accounts and need to deploy or manage apps under a specific one.
 
-## fal teams list
+## fal account list
 
-List all teams you belong to:
-
-```bash theme={null}
-fal teams list
-```
-
-Shows your personal account and all team accounts, indicating which is currently active.
-
-## fal teams set
-
-Switch to a specific team:
+List all accounts you belong to:
 
 ```bash theme={null}
-fal teams set <account>
+fal account list
 ```
 
-After switching, all CLI operations (`fal deploy`, `fal apps`, `fal secrets`, etc.) will run under the selected team account.
+Shows your personal account along with any team and organization accounts, indicating which is currently active.
+
+Supports `--output {pretty,json}` and `--json` for machine-readable output.
+
+## fal account set
+
+Switch to a specific account:
+
+```bash theme={null}
+fal account set <account>
+```
+
+`<account>` may be either an account nickname or the index shown by `fal account list`. After switching, all CLI operations (`fal deploy`, `fal apps`, `fal secrets`, etc.) run under the selected account.
+
+If no `<account>` is provided, you'll be prompted interactively.
 
 **Arguments:**
 
-| Argument  | Description                |
-| --------- | -------------------------- |
-| `account` | The team name to switch to |
+| Argument  | Description                                       |
+| --------- | ------------------------------------------------- |
+| `account` | The account nickname (or list index) to switch to |
 
 **Example:**
 
 ```bash theme={null}
 # Switch to your company team
-fal teams set my-company
+fal account set my-company
 
 # Deploy under that team
 fal deploy my_app.py::MyApp
 ```
 
-## fal teams unset
+## fal account unset
 
 Switch back to your personal account:
 
 ```bash theme={null}
-fal teams unset
+fal account unset
 ```
-
-<Note>
-  You can also use `fal team` as a shorthand alias for `fal teams`.
-</Note>
 
 
 # https://fal.ai/docs/api-reference/client-libraries/dart/index.md
@@ -9385,6 +9545,28 @@ You can deploy to different [environments](/documentation/deployment/manage-envi
 ```bash theme={null}
 fal deploy my_app.py::MyApp --env staging
 ```
+
+## Previewing a Deployment
+
+Use the `--check` command line option or set `FAL_DEPLOY_CHECK` to `true` to review what will change before your app is actually deployed:
+
+```bash theme={null}
+fal deploy path/to/myapp.py::MyApp --check
+FAL_DEPLOY_CHECK=true fal deploy path/to/myapp.py::MyApp
+```
+
+The deployment check shows the target app and environment, current revision, source object, authentication mode, deployment strategy, build-cache behavior, and effective production configuration changes. If the app has not been deployed before, it shows the effective deployment values that will be used for the first revision.
+
+When using the deployment check feature, you will by default be prompted for confirmation before deploying. In non-interactive environments, pass `--yes` to skip the prompt while still printing the summary:
+
+```bash theme={null}
+fal deploy path/to/myapp.py::MyApp --check --yes
+FAL_DEPLOY_CHECK=true fal deploy path/to/myapp.py::MyApp --yes
+```
+
+<Note>
+  Scaling parameters such as `keep_alive`, `min_concurrency`, and `max_concurrency` are inherited from the previous deployment unless you pass `--reset-scale`. The deployment check calls out code values that will not apply without `--reset-scale`.
+</Note>
 
 ## Authentication Modes
 

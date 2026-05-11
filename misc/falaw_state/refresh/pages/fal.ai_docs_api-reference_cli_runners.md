@@ -18,7 +18,8 @@ Commands:
     kill        Kill a runner.
     list        List runners.
     logs (log)  Show logs for a runner.
-    shell       Open an interactive shell in a runner.
+    shell       Open a shell on a runner.
+    exec        Execute a command on a runner.
 ```
 
 ## List
@@ -147,3 +148,37 @@ fal runners shell runner_abc123xyz
 ```
 
 Once connected, you have full shell access within the runner's container environment. Press `Ctrl+D` or type `exit` to disconnect.
+
+## Exec
+
+Run a one-off command on a runner without opening an interactive shell.
+
+```bash theme={null}
+Usage: fal runners exec [-h] [--team TEAM] [-it] id [command ...]
+
+Execute a command on a runner.
+
+Positional Arguments:
+  id                  Runner ID.
+  command             Command to execute (after `--`).
+
+Options:
+  -h, --help          show this help message and exit
+  --team TEAM         The team to use.
+  -it, --interactive  Allocate a TTY and attach stdin (interactive mode).
+```
+
+The command and its arguments are passed after a `--` separator so they aren't parsed as flags by the `fal` CLI.
+
+### Examples
+
+```bash theme={null}
+# Print environment variables on the runner
+fal runners exec runner_abc123xyz -- env
+
+# Tail an arbitrary log file inside the container
+fal runners exec runner_abc123xyz -- tail -f /var/log/my-app.log
+
+# Run an interactive Python REPL
+fal runners exec runner_abc123xyz -it -- python
+```

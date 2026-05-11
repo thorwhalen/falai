@@ -82,6 +82,28 @@ You can deploy to different [environments](/documentation/deployment/manage-envi
 fal deploy my_app.py::MyApp --env staging
 ```
 
+## Previewing a Deployment
+
+Use the `--check` command line option or set `FAL_DEPLOY_CHECK` to `true` to review what will change before your app is actually deployed:
+
+```bash theme={null}
+fal deploy path/to/myapp.py::MyApp --check
+FAL_DEPLOY_CHECK=true fal deploy path/to/myapp.py::MyApp
+```
+
+The deployment check shows the target app and environment, current revision, source object, authentication mode, deployment strategy, build-cache behavior, and effective production configuration changes. If the app has not been deployed before, it shows the effective deployment values that will be used for the first revision.
+
+When using the deployment check feature, you will by default be prompted for confirmation before deploying. In non-interactive environments, pass `--yes` to skip the prompt while still printing the summary:
+
+```bash theme={null}
+fal deploy path/to/myapp.py::MyApp --check --yes
+FAL_DEPLOY_CHECK=true fal deploy path/to/myapp.py::MyApp --yes
+```
+
+<Note>
+  Scaling parameters such as `keep_alive`, `min_concurrency`, and `max_concurrency` are inherited from the previous deployment unless you pass `--reset-scale`. The deployment check calls out code values that will not apply without `--reset-scale`.
+</Note>
+
 ## Authentication Modes
 
 Authentication controls who can call your app and who pays for compute. You set it with the `--auth` flag or the `app_auth` class attribute.

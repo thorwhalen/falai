@@ -23,22 +23,28 @@ Commands:
 
 ```bash theme={null}
 Usage: fal auth login [-h] [--debug] [--pdb] [--cprofile]
+                      [--connection CONNECTION] [--no-browser]
 
 Log in a user.
 
 Options:
-  -h, --help  show this help message and exit
+  -h, --help               show this help message and exit
+  --connection CONNECTION  Auth connection (e.g. github, google, or an SSO domain). Skips the interactive prompt.
+  --no-browser             Don't attempt to open a browser. Just print the URL to visit.
 ```
+
+When `--connection` is omitted, the CLI prompts you to choose between GitHub, Google, or your enterprise SSO domain. The previously used choice is remembered and offered as the default on subsequent logins.
 
 ## Logout
 
 ```bash theme={null}
-Usage: fal auth logout [-h] [--debug] [--pdb] [--cprofile]
+Usage: fal auth logout [-h] [--debug] [--pdb] [--cprofile] [--no-browser]
 
 Log out the currently logged-in user.
 
 Options:
-  -h, --help  show this help message and exit
+  -h, --help    show this help message and exit
+  --no-browser  Don't attempt to open a browser. Just print the URL to visit.
 ```
 
 ## Whoami

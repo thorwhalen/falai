@@ -100,7 +100,7 @@ def _parse_entry_block(block: str) -> Optional[dict]:
 
 def extract_models_from_corpus(path: str) -> Iterator[dict]:
     """Yield ModelRecord-shaped dicts parsed from llms-full.txt."""
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         text = f.read()
     sections = re.split(r"^## ", text, flags=re.MULTILINE)
     for sec in sections[1:]:  # skip preamble before the first ##
@@ -170,7 +170,7 @@ def refresh_models_from_corpus(
     new_records = list(extract_models_from_corpus(path))
 
     seed_path = _models_path()
-    with open(seed_path) as f:
+    with open(seed_path, encoding="utf-8") as f:
         existing = {r["id"]: r for r in json.load(f)}
 
     added_ids: list[str] = []
@@ -192,7 +192,7 @@ def refresh_models_from_corpus(
             existing.values(),
             key=lambda r: (r.get("category", ""), r.get("quality_tier", ""), r["id"]),
         )
-        with open(seed_path, "w") as f:
+        with open(seed_path, "w", encoding="utf-8") as f:
             json.dump(merged, f, indent=2, ensure_ascii=False)
             f.write("\n")
         _load_models.cache_clear()

@@ -79,3 +79,65 @@ To delete a profile, use the `fal profile delete` command followed by the profil
 ❯ fal profile delete example
 Profile example deleted.
 ```
+
+## Command Reference
+
+```bash theme={null}
+Usage: fal profile [-h] command ...
+
+Profile management.
+
+Commands:
+  command
+    list      List all profiles.
+    set       Set default profile. If the profile doesn't exist, you'll be prompted to create it.
+    unset     Unset default profile.
+    key       Set key for profile.
+    host      Set fal host.
+    create    Create a new profile.
+    delete    Delete profile.
+```
+
+<Note>
+  `fal profiles` is an alias for `fal profile`.
+</Note>
+
+### create
+
+Create a new named profile and set it as the default:
+
+```bash theme={null}
+fal profile create <PROFILE>
+```
+
+If the profile already exists the command is a no-op. After creation you'll typically run `fal profile key` to attach an API key.
+
+### unset
+
+Clear the default profile selection:
+
+```bash theme={null}
+fal profile unset
+```
+
+After unsetting, `fal` falls back to environment variables (`FAL_KEY`, `FAL_HOST`).
+
+### host
+
+Override the fal API host for the active profile. Most users don't need this — it's primarily useful for self-hosted or staging deployments:
+
+```bash theme={null}
+fal profile host <HOST>
+```
+
+### list
+
+```bash theme={null}
+Usage: fal profile list [-h] [--output {pretty,json}] [--json]
+```
+
+Supports JSON output for scripting:
+
+```bash theme={null}
+fal profile list --json
+```

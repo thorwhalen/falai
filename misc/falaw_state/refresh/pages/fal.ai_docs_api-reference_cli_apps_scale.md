@@ -10,6 +10,9 @@ Usage: fal apps scale [-h] [--debug] [--pdb] [--cprofile]
                       [--max-multiplexing MAX_MULTIPLEXING]
                       [--max-concurrency MAX_CONCURRENCY]
                       [--min-concurrency MIN_CONCURRENCY]
+                      [--concurrency-buffer CONCURRENCY_BUFFER]
+                      [--concurrency-buffer-perc CONCURRENCY_BUFFER_PERC]
+                      [--scaling-delay SCALING_DELAY]
                       [--request-timeout REQUEST_TIMEOUT]
                       [--startup-timeout STARTUP_TIMEOUT]
                       [--machine-types MACHINE_TYPES [MACHINE_TYPES ...]]
@@ -32,8 +35,14 @@ Options:
                         Maximum concurrency.
   --min-concurrency MIN_CONCURRENCY
                         Minimum concurrency
+  --concurrency-buffer CONCURRENCY_BUFFER
+                        Concurrency buffer (minimum extra capacity).
+  --concurrency-buffer-perc CONCURRENCY_BUFFER_PERC
+                        Concurrency buffer expressed as a percentage.
+  --scaling-delay SCALING_DELAY
+                        Scaling delay (seconds).
   --request-timeout REQUEST_TIMEOUT
-                        Request timeout (seconds).
+                        Request timeout (seconds). If a request takes longer, it is aborted and the runner gracefully stopped as it could be in a bad state.
   --startup-timeout STARTUP_TIMEOUT
                         Startup timeout (seconds).
   --machine-types MACHINE_TYPES [MACHINE_TYPES ...]
