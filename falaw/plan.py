@@ -194,8 +194,7 @@ class Plan:
         Use this to refuse to gate on a budget when the estimate is incomplete.
         """
         return any(
-            c.estimated_cost_usd is None and c.cache_status != "hit"
-            for c in self.calls
+            c.estimated_cost_usd is None and c.cache_status != "hit" for c in self.calls
         )
 
     def with_call_replaced(self, index: int, new_call: CallPlan) -> "Plan":
@@ -235,6 +234,7 @@ def make_call_plan(
         # from errors, none of which need plan.
         try:
             from .cache import cache_get  # type: ignore[import-not-found]
+
             status = "hit" if cache_get(application, arguments) is not None else "miss"
         except Exception:
             # Cache lookup is best-effort — if it errors (corrupted manifest,
@@ -307,9 +307,11 @@ def execute(
         resolved_args = _resolve_placeholders(call.arguments, artifacts)
         if use_cache:
             from .cache import cached_call_fal
+
             raw = cached_call_fal(call.application, resolved_args, on_event=on_event)
         else:
             from .core import call_fal
+
             raw = call_fal(call.application, resolved_args, on_event=on_event)
         artifacts.append(converter(raw, call))
     return artifacts
@@ -381,9 +383,11 @@ def _synthetic_artifact(call: CallPlan):
     # Deterministic asset_id from the call's identity, so dry-run twice over
     # the same Plan yields the same Artifact.id pair (helpful for testing).
     import json as _json
+
     blob = _json.dumps(
         {"app": call.application, "args": call.arguments, "tool": call.tool},
-        sort_keys=True, default=str,
+        sort_keys=True,
+        default=str,
     ).encode("utf-8")
     fake_id = hash_bytes(blob)
     return Artifact(
@@ -449,7 +453,10 @@ def _default_artifact_converter(raw: dict, call: CallPlan):
     else:
         # Last-resort: hash the response itself.
         import json as _json
-        fake_id = hash_bytes(_json.dumps(raw, sort_keys=True, default=str).encode("utf-8"))
+
+        fake_id = hash_bytes(
+            _json.dumps(raw, sort_keys=True, default=str).encode("utf-8")
+        )
 
     prov = Provenance(
         was_generated_by=f"agent:fal@{call.application}",
