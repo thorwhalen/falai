@@ -1,0 +1,82 @@
+# fal.ai
+
+> fal.ai is a comprehensive generative media platform for developers providing fast, reliable APIs for AI-powered image, video, audio generation, and workflow orchestration. The platform serves over 100 AI models with enterprise-grade infrastructure, real-time streaming capabilities, and comprehensive developer tools.
+
+fal.ai enables developers to integrate cutting-edge AI generation capabilities into their applications through a unified API platform. The service provides both consumer-facing web interfaces and enterprise solutions with SOC2 compliance, custom model hosting, and advanced user management.
+
+The platform architecture centers around a universal model proxy that provides consistent access to diverse AI models including FLUX, Stable Diffusion, Kling video generation, LLMs, and custom fine-tuned models. Key features include ComfyUI workflow integration, real-time streaming endpoints, intelligent rate limiting, and comprehensive SDK support across multiple programming languages.
+
+## API Documentation
+
+- [API Overview](/docs/getting-started) - Core API concepts and authentication
+- [Model Endpoints](/docs/model-endpoints) - Available AI models and their capabilities  
+- [Streaming API](/docs/streaming) - Real-time generation and progress tracking
+- [Workflow API](/docs/workflows) - ComfyUI and custom workflow orchestration
+- [Authentication](/docs/authentication) - API keys, OAuth, and enterprise SSO
+- [SDKs](/docs/sdks) - JavaScript, Python, Swift, and cURL implementations
+- [Rate Limiting](/docs/rate-limits) - Usage quotas and throttling policies
+- [Pricing](/docs/pricing) - GPU-based and output-based billing models
+
+## Platform Features
+
+- [Model Gallery](/models) - Browse 100+ AI models across 30+ categories
+- [Playground](/models/[model]/playground) - Interactive model testing interface
+- [Workflows](/workflows) - Visual AI pipeline builder with drag-and-drop interface
+- [AI Agent](/agent) - Conversational AI with integrated media generation
+- [Dashboard](/dashboard) - Usage analytics, billing, and account management
+- [Team Management](/dashboard/teams) - Multi-user accounts and permissions
+
+## Developer Resources
+
+- [Quick Start Guide](/docs/getting-started/quickstart) - 5-minute integration tutorial
+- [Code Examples](/docs/examples) - Sample implementations and use cases
+- [OpenAPI Specification](/client/openapi.json) - Machine-readable API definition
+- [Troubleshooting](/docs/troubleshooting) - Common issues and solutions
+- [Migration Guides](/docs/migration) - Upgrading between API versions
+- [Best Practices](/docs/best-practices) - Performance optimization and error handling
+
+## Enterprise Solutions
+
+- [Enterprise Overview](/enterprise) - Custom hosting and SOC2 compliance
+- [Private Models](/enterprise/private-models) - Dedicated model deployments
+- [Custom Kernels](/enterprise/custom-kernels) - Optimized inference and training
+- [SSO Integration](/enterprise/sso) - SAML/OIDC authentication setup
+- [Support](/enterprise/support) - Dedicated technical assistance
+
+## Featured Model Categories
+
+- [High Quality Image Generation](/models/fal-ai/flux-pro/v1.1-ultra) - FLUX1.1 [pro] Ultra, Imagen4 Ultra, Recraft V3
+- [Fast Image Generation](/models/fal-ai/flux/dev) - FLUX.1 [dev], FLUX.1 [schnell], Sana Sprint
+- [Image Editing](/models/fal-ai/flux-pro/kontext/max) - FLUX.1 Kontext, SeedEdit 3.0, OmniGen v2
+- [Video Generation](/models/fal-ai/veo3) - Veo 3, Kling 2.1 Master, MiniMax Hailuo-02 Pro
+- [Audio Processing](/models/fal-ai/minimax/voice-clone) - Voice cloning, speech-to-speech, audio isolation
+- [Avatar Creation](/models/fal-ai/ai-avatar) - Talking avatars and lip-sync generation
+- [Text-to-Speech](/models/fal-ai/minimax/speech-02-hd) - Multilingual TTS and voice synthesis
+- [Large Language Models](/models/fal-ai/any-llm) - Claude, GPT-4o, Gemini, Llama models
+- [FLUX Training](/models/fal-ai/flux-lora-fast-training) - Custom LoRA training for personalization
+
+## Top Recommended Models
+
+- [FLUX1.1 [pro] Ultra](/models/fal-ai/flux-pro/v1.1-ultra) - Ultra-high quality image generation with 2K resolution
+- [Veo 3](/models/fal-ai/veo3) - Google's most advanced AI video generation with sound
+- [MiniMax Voice Clone](/models/fal-ai/minimax/voice-clone) - Clone any voice with seconds of audio sample
+- [AI Avatar MultiTalk](/models/fal-ai/ai-avatar) - Create talking avatars that lip-sync to audio
+- [FLUX LoRA Fast Training](/models/fal-ai/flux-lora-fast-training) - Train custom styles at blazing speeds
+- [Any LLM](/models/fal-ai/any-llm) - Access Claude, GPT-4o, Gemini, and Llama models
+- [FLUX.1 Kontext [max]](/models/fal-ai/flux-pro/kontext/max) - Premium image editing with enhanced prompt adherence
+- [Clarity Upscaler](/models/fal-ai/clarity-upscaler) - High-fidelity image upscaling
+
+## Community and Support
+
+- [Discord Community](https://discord.gg/fal-ai) - Developer discussions and announcements
+- [GitHub Examples](https://github.com/fal-ai/examples) - Open-source implementation samples
+- [Status Page](https://status.fal.ai) - Real-time platform status and incidents
+- [Blog](/blog) - Technical articles and platform updates
+- [Changelog](/changelog) - New features and improvements
+
+## Optional
+
+- [Terms of Service](/terms) - Platform usage agreements
+- [Privacy Policy](/privacy) - Data handling and privacy practices
+- [Security](/security) - Platform security measures and certifications
+- [Contact](/contact) - Sales and technical support contacts
