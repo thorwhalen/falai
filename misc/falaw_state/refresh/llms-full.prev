@@ -1,0 +1,643 @@
+# fal.ai
+
+> fal.ai is a comprehensive generative media platform for developers providing fast, reliable APIs for AI-powered image, video, audio generation, and workflow orchestration. The platform serves over 100 AI models with enterprise-grade infrastructure, real-time streaming capabilities, and comprehensive developer tools.
+
+fal.ai enables developers to integrate cutting-edge AI generation capabilities into their applications through a unified API platform. The service provides both consumer-facing web interfaces and enterprise solutions with SOC2 compliance, custom model hosting, and advanced user management.
+
+The platform architecture centers around a universal model proxy that provides consistent access to diverse AI models including FLUX, video generation, audio processing, LLMs, and custom fine-tuned models. Key features include ComfyUI workflow integration, real-time streaming endpoints, intelligent rate limiting, and comprehensive SDK support across multiple programming languages.
+
+## Platform Overview
+
+fal.ai is a comprehensive generative media platform designed for developers who need to integrate AI-powered content generation into their applications. The platform provides a unified API interface to access over 100 different AI models across multiple categories, including high-quality image generation, video creation, audio processing, and large language models.
+
+### Core Value Proposition
+
+- **Fast and Reliable**: Optimized inference infrastructure with sub-second response times
+- **Developer-First**: Comprehensive SDKs, detailed documentation, and interactive playgrounds
+- **Enterprise-Ready**: SOC2 compliance, custom hosting, and advanced security features
+- **Unified API**: Single interface for accessing diverse AI models and capabilities
+- **Real-Time Streaming**: Support for live generation updates and progress tracking
+
+### Platform Architecture
+
+The fal.ai platform is built on a sophisticated multi-layer architecture:
+
+1. **Universal Model Proxy**: Central API gateway that provides consistent access to all models
+2. **Intelligent Rate Limiting**: Context-aware throttling based on user status and model requirements
+3. **Authentication Layer**: Multi-provider auth supporting Auth0, WorkOS, and enterprise SSO
+4. **Database Layer**: PostgreSQL with full-text search and comprehensive metadata storage
+5. **Workflow Engine**: ComfyUI integration for complex AI pipeline orchestration
+
+## API Documentation
+
+### Getting Started
+
+The fal.ai API uses RESTful principles with JSON request/response formats. All API requests require authentication via API keys.
+
+**Base URL**: `https://queue.fal.run/`
+
+**Authentication**: Include your API key in the `Authorization` header:
+```
+Authorization: Key YOUR_API_KEY
+```
+
+### Core API Concepts
+
+#### Model Endpoints
+Each AI model is accessible via a standardized endpoint pattern:
+```
+POST /fal-ai/{model-name}
+```
+
+Example models:
+- `fal-ai/flux/dev` - Fast high-quality image generation
+- `fal-ai/veo3` - Advanced video generation with sound
+- `fal-ai/minimax/voice-clone` - Voice cloning capabilities
+
+#### Request Format
+FLUX image generation example:
+```json
+{
+  "prompt": "Your generation prompt",
+  "image_size": "landscape_4_3",
+  "num_inference_steps": 28,
+  "guidance_scale": 3.5,
+  "enable_safety_checker": true
+}
+```
+
+#### Response Format
+Model responses include generated media URLs and metadata:
+```json
+{
+  "images": [
+    {
+      "url": "https://v2.fal.media/files/...",
+      "width": 1024,
+      "height": 768,
+      "content_type": "image/jpeg"
+    }
+  ],
+  "timings": {
+    "inference": 1.2
+  },
+  "seed": 42,
+  "has_nsfw_concepts": [false]
+}
+```
+
+### Rate Limiting
+
+Rate limits vary based on user status and model type:
+
+- **Anonymous Users**: 20 requests per minute
+- **Signed-In Users**: 100 requests per minute  
+- **Pro Users**: 500 requests per minute
+- **Enterprise**: Custom limits
+
+### Error Handling
+
+The API uses standard HTTP status codes and provides detailed error messages:
+
+```json
+{
+  "error": {
+    "type": "invalid_request",
+    "message": "The prompt parameter is required",
+    "code": "missing_parameter"
+  }
+}
+```
+
+## High Quality Image Generation Models
+
+Create stunning, professional-grade images from text descriptions using advanced AI models.
+
+### FLUX1.1 [pro] Ultra
+- **Model**: `fal-ai/flux-pro/v1.1-ultra`
+- **Purpose**: Ultra-high quality image generation
+- **Features**: Up to 2K resolution, improved photo realism, professional-grade quality
+
+### Imagen4 Ultra
+- **Model**: `fal-ai/imagen4/preview/ultra`
+- **Purpose**: Google's highest quality image generation
+- **Features**: Premium results with advanced composition and detail
+
+### Recraft V3
+- **Model**: `fal-ai/recraft/v3/text-to-image`
+- **Purpose**: Multi-format image generation
+- **Features**: Long texts, vector art, brand-style images
+
+### Ideogram V3
+- **Model**: `fal-ai/ideogram/v3`
+- **Purpose**: Typography-focused image generation
+- **Features**: Exceptional typography handling and realistic outputs
+
+### FLUX1.1 [pro]
+- **Model**: `fal-ai/flux-pro/v1.1`
+- **Purpose**: Enhanced professional image generation
+- **Features**: Superior composition, detail, and artistic fidelity
+
+## Fast and Quality Image Generation Models
+
+Generate high-quality images quickly with optimized AI models for rapid content creation.
+
+### FLUX.1 [dev]
+- **Model**: `fal-ai/flux/dev`
+- **Purpose**: Fast high-quality image generation
+- **Features**: 12 billion parameter model, commercial use allowed
+
+### FLUX.1 [schnell]
+- **Model**: `fal-ai/flux/schnell`
+- **Purpose**: Ultra-fast image generation
+- **Features**: 1-4 steps generation, commercial use allowed
+
+### Sana Sprint
+- **Model**: `fal-ai/sana/sprint`
+- **Purpose**: Fast 4K image generation
+- **Features**: Exceptional speed for 4K resolution
+
+### HiDream-I1 Fast
+- **Model**: `fal-ai/hidream-i1-fast`
+- **Purpose**: Fast state-of-the-art generation
+- **Features**: 17B parameter model, 16 steps for quality results
+
+## Image Editing Tools
+
+Transform and enhance images using AI-powered editing models with natural language instructions.
+
+### FLUX.1 Kontext [max]
+- **Model**: `fal-ai/flux-pro/kontext/max`
+- **Purpose**: Premium image editing with enhanced prompt adherence
+- **Features**: Improved prompt adherence, typography generation, premium consistency
+
+### SeedEdit 3.0
+- **Model**: `fal-ai/bytedance/seededit/v3/edit-image`
+- **Purpose**: Precise image editing with content preservation
+- **Features**: Accurate editing instructions, effective content preservation
+
+### OmniGen v2
+- **Model**: `fal-ai/omnigen-v2`
+- **Purpose**: Unified multi-task image generation and editing
+- **Features**: Image editing, personalization, virtual try-on, multi-person generation
+
+### FLUX Kontext [dev]
+- **Model**: `fal-ai/flux-kontext/dev`
+- **Purpose**: Frontier image editing
+- **Features**: Advanced editing capabilities with development model
+
+## Video Generation Models
+
+Create high-quality videos from text prompts and images using advanced AI video generation models.
+
+### Veo 3
+- **Model**: `fal-ai/veo3`
+- **Purpose**: Advanced AI video generation
+- **Features**: Google's most advanced video model with sound generation
+
+### Kling 2.1 Master
+- **Model**: `fal-ai/kling-video/v2.1/master/image-to-video`
+- **Purpose**: Premium image-to-video generation
+- **Features**: Unparalleled motion fluidity, cinematic visuals, exceptional prompt precision
+
+### MiniMax Hailuo-02 Pro
+- **Model**: `fal-ai/minimax/hailuo-02/pro/image-to-video`
+- **Purpose**: Advanced image-to-video generation
+- **Features**: 1080p resolution, high-quality image-to-video capabilities
+
+### Seedance 1.0 Pro
+- **Model**: `fal-ai/bytedance/seedance/v1/pro/image-to-video`
+- **Purpose**: High-quality video generation
+- **Features**: Professional-grade video generation by Bytedance
+
+### PixVerse v4.5
+- **Model**: `fal-ai/pixverse/v4.5/image-to-video`
+- **Purpose**: High-quality video generation
+- **Features**: Text and image prompt support with v4.5 improvements
+
+## Audio Processing & Enhancement Tools
+
+Transform, clone, and enhance your audio with AI-powered tools for voice cloning, music extension, and audio separation.
+
+### MiniMax Voice Clone
+- **Model**: `fal-ai/minimax/voice-clone`
+- **Purpose**: Voice cloning capabilities
+- **Features**: Clone any voice with just a few seconds of audio sample
+
+### Transform Audios
+- **Model**: `resemble-ai/chatterboxhd/speech-to-speech`
+- **Purpose**: Speech-to-speech transformation
+- **Features**: Convert speech from one voice to another in real-time
+
+### PlayAI Inpaint
+- **Model**: `fal-ai/playai/inpaint/diffusion`
+- **Purpose**: Audio inpainting using diffusion models
+- **Features**: Fill in missing or corrupted audio segments seamlessly
+
+### ElevenLabs Audio Isolation
+- **Model**: `fal-ai/elevenlabs/audio-isolation`
+- **Purpose**: Audio isolation and separation
+- **Features**: Separate vocals, instruments, and background noise
+
+## Avatar & Lip Sync Tools
+
+Create talking avatars and animated videos from audio files using AI-powered models.
+
+### AI Avatar MultiTalk
+- **Model**: `fal-ai/ai-avatar`
+- **Purpose**: Single-person talking avatar generation
+- **Features**: Lip-syncs to audio with natural facial expressions
+- **Input**: Requires image + audio file
+
+### AI Avatar Multi (Multi-Person)
+- **Model**: `fal-ai/ai-avatar/multi`
+- **Purpose**: Multi-person conversation video generation
+- **Features**: Realistic scenes with multiple people speaking
+- **Input**: Requires image with two people + audio file
+
+### Sync Lipsync 2.0
+- **Model**: `fal-ai/sync-lipsync/v2`
+- **Purpose**: Advanced lip-sync animation generation
+- **Features**: High-quality synchronization with advanced algorithms
+
+### Kling LipSync
+- **Model**: `fal-ai/kling-video/lipsync/audio-to-video`
+- **Purpose**: Audio-to-video lip-sync generation
+- **Features**: Realistic lip movements with natural synchronization
+
+## Text-to-Speech Tools
+
+Convert text into natural-sounding speech using advanced AI voice synthesis models.
+
+### MiniMax Speech-02 HD
+- **Model**: `fal-ai/minimax/speech-02-hd`
+- **Purpose**: High-quality text-to-speech generation
+- **Features**: Advanced AI techniques for high-quality output
+
+### ElevenLabs TTS Multilingual v2
+- **Model**: `fal-ai/elevenlabs/tts/multilingual-v2`
+- **Purpose**: Multilingual text-to-speech
+- **Features**: Support for multiple languages
+
+### PlayAI TTS v3
+- **Model**: `fal-ai/playai/tts/v3`
+- **Purpose**: Blazing-fast TTS with emotional tones
+- **Features**: Improved emotional tones, extensive multilingual support
+
+### PlayAI TTS Dialog
+- **Model**: `fal-ai/playai/tts/dialog`
+- **Purpose**: Multi-speaker dialogue generation
+- **Features**: Natural-sounding multi-speaker dialogues for storytelling
+
+## Large Language Models (LLMs)
+
+Access a comprehensive selection of advanced language models for text generation, analysis, and AI conversations.
+
+### Any LLM (OpenRouter Integration)
+- **Model**: `fal-ai/any-llm`
+- **Purpose**: Universal LLM access
+- **Features**: Access to Claude, GPT-4o, Gemini, Llama models via OpenRouter
+
+### Supported Models Include:
+
+#### Anthropic Models
+- **Claude 3.7 Sonnet**: Advanced reasoning and analysis
+- **Claude 3.5 Sonnet**: Balanced performance and capabilities
+- **Claude 3.5 Haiku**: Fast and efficient processing
+
+#### Google Models
+- **Gemini Pro 1.5**: High-performance multimodal capabilities
+- **Gemini Flash 1.5**: Fast and efficient generation
+- **Gemini 2.0 Flash 001**: Latest generation with enhanced features
+
+#### Meta Llama Models
+- **Llama 3.2 1B Instruct**: Lightweight instruction-following
+- **Llama 3.1 70B Instruct**: High-performance large model
+- **Llama 4 Maverick**: Advanced reasoning and creativity
+
+#### OpenAI Models
+- **GPT-4o Mini**: Efficient and cost-effective
+- **GPT-4o**: Full-featured advanced model
+
+### Vision Language Models (VLMs)
+- **Model**: `fal-ai/any-llm/vision`
+- **Purpose**: Universal vision language model access
+- **Features**: Multimodal understanding with text and images
+
+## Background Removal & Image Tools
+
+Remove backgrounds and enhance images with precision using specialized AI models.
+
+### BiRefNet v2
+- **Model**: `fal-ai/birefnet/v2`
+- **Purpose**: High-resolution background removal
+- **Features**: Works best with 2048x2048 operating resolutions
+
+### Clarity Upscaler
+- **Model**: `fal-ai/clarity-upscaler`
+- **Purpose**: High-fidelity image upscaling
+- **Features**: Very high fidelity upscaling with creativity controls
+
+### Ideogram V3 Reframe
+- **Model**: `fal-ai/ideogram/v3/reframe`
+- **Purpose**: Creative image extension
+- **Features**: Extend images while preserving content, add creative directions
+
+## Training & Personalization
+
+Train custom LoRA models for FLUX image generation with specialized trainers.
+
+### FLUX LoRA Fast Training
+- **Model**: `fal-ai/flux-lora-fast-training`
+- **Purpose**: Rapid LoRA training
+- **Features**: Train styles, people and subjects at blazing speeds
+
+### FLUX LoRA Portrait Trainer
+- **Model**: `fal-ai/flux-lora-portrait-trainer`
+- **Purpose**: Specialized portrait training
+- **Features**: Optimized for portraits with bright highlights and detailed results
+
+### FLUX Pro Trainer
+- **Model**: `fal-ai/flux-pro-trainer`
+- **Purpose**: FLUX Pro LoRA training
+- **Features**: Training for Flux Pro endpoints
+
+## Music & Audio Generation
+
+Create music, songs, and audio content using AI-powered generation models.
+
+### DiffRhythm
+- **Model**: `fal-ai/diffrhythm`
+- **Purpose**: Fast song generation from lyrics
+- **Features**: Transforms lyrics into full songs in less than 30 seconds
+
+### Lyria 2
+- **Model**: `fal-ai/lyria2`
+- **Purpose**: Universal music generation
+- **Features**: Google's latest model capable of generating any type of music
+
+### MMAudio v2
+- **Model**: `fal-ai/mmaudio-v2/text-to-audio`
+- **Purpose**: Text-to-audio generation
+- **Features**: Generates synchronized audio from text inputs
+
+## SDK Documentation
+
+### JavaScript/TypeScript SDK
+
+**Installation**:
+```bash
+npm install @fal-ai/client
+```
+
+**Basic FLUX Usage**:
+```javascript
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/flux/dev", {
+  input: {
+    prompt: "Extreme close-up of a single tiger eye",
+    image_size: "landscape_4_3",
+    num_inference_steps: 28,
+    guidance_scale: 3.5,
+    enable_safety_checker: true
+  },
+  logs: true,
+  onQueueUpdate: (update) => {
+    if (update.status === "IN_PROGRESS") {
+      update.logs.map((log) => log.message).forEach(console.log);
+    }
+  },
+});
+```
+
+**ComfyUI Dynamic LoRA Loading**:
+```javascript
+const result = await fal.subscribe("comfy/fal-ai/dynamic-lora-loading", {
+  input: {
+    prompt: "pixel, a cute corgi",
+    negative_prompt: "3d render, realistic",
+    lora_url: "https://huggingface.co/nerijs/pixel-art-xl/resolve/main/pixel-art-xl.safetensors"
+  }
+});
+```
+
+### Python SDK
+
+**Installation**:
+```bash
+pip install fal-client
+```
+
+**Basic Usage**:
+```python
+import fal_client
+
+def on_queue_update(update):
+    if isinstance(update, fal_client.InProgress):
+        for log in update.logs:
+           print(log["message"])
+
+result = fal_client.subscribe(
+    "fal-ai/flux/dev",
+    arguments={
+        "prompt": "Extreme close-up of a single tiger eye",
+        "image_size": "landscape_4_3",
+        "num_inference_steps": 28,
+        "guidance_scale": 3.5,
+        "enable_safety_checker": True
+    },
+    with_logs=True,
+    on_queue_update=on_queue_update,
+)
+```
+
+### Swift SDK
+
+**Installation** (Package.swift):
+```swift
+dependencies: [
+    .package(url: "https://github.com/fal-ai/fal-swift", from: "0.1.0")
+]
+```
+
+**Usage**:
+```swift
+import FalClient
+
+let result = try await fal.subscribe(
+    to: "fal-ai/flux/dev",
+    input: [
+        "prompt": "Extreme close-up of a single tiger eye",
+        "image_size": "landscape_4_3",
+        "num_inference_steps": 28,
+        "guidance_scale": 3.5,
+        "enable_safety_checker": true
+    ],
+    includeLogs: true
+)
+```
+
+### Authentication
+
+Before using the FAL API, you need to obtain an API key:
+
+1. Sign up at [fal.ai](https://fal.ai)
+2. Generate an API key from your dashboard
+3. Set the environment variable:
+   ```bash
+   export FAL_KEY="your-api-key-here"
+   ```
+
+## Ready-to-Go Image Editing Pipelines
+
+Quick and easy image transformations with specialized AI models for specific editing tasks.
+
+### Professional Editing
+- **Professional Photo**: `fal-ai/image-editing/professional-photo` - Perfect lighting and high-end photography style
+- **Face Enhancement**: `fal-ai/image-editing/face-enhancement` - Perfect skin texture and professional retouching
+- **Color Correction**: `fal-ai/image-editing/color-correction` - Perfect white balance and professional color grading
+
+### Creative Transformations
+- **Cartoonify**: `fal-ai/image-editing/cartoonify` - Studio Ghibli style with bold outlines
+- **Style Transfer**: `fal-ai/image-editing/style-transfer` - Vibrant colors and artistic details
+- **Age Progression**: `fal-ai/image-editing/age-progression` - Show different ages while maintaining features
+
+### Practical Tools
+- **Background Change**: `fal-ai/image-editing/background-change` - Replace backgrounds with perfect lighting
+- **Hair Change**: `fal-ai/image-editing/hair-change` - Change hairstyles with natural look
+- **Object Removal**: `fal-ai/image-editing/object-removal` - Remove unwanted objects seamlessly
+- **Text Removal**: `fal-ai/image-editing/text-removal` - Remove text while preserving backgrounds
+
+## Enterprise Solutions
+
+### Private Model Hosting
+
+fal.ai offers dedicated model hosting for enterprise customers requiring enhanced security, performance, and customization.
+
+**Private Hosting Features**:
+- Dedicated GPU clusters with guaranteed availability
+- Custom model versions and modifications
+- Enhanced security with VPC deployment
+- SLA guarantees for uptime and response times
+
+### SOC2 Compliance
+
+fal.ai maintains SOC2 Type II certification, ensuring enterprise-grade security and compliance.
+
+**Compliance Features**:
+- Data encryption in transit and at rest
+- Regular security audits and assessments
+- Access controls and audit logging
+- Incident response procedures
+
+### Single Sign-On (SSO) Integration
+
+Enterprise customers can integrate their existing identity providers with fal.ai supporting SAML 2.0, OpenID Connect (OIDC), and major providers like Okta, Auth0, and Azure AD.
+
+## Platform Features
+
+### Model Gallery
+
+The fal.ai model gallery provides a comprehensive catalog of available AI models with interactive testing capabilities, advanced search and filtering, performance benchmarks, and user ratings.
+
+### Dashboard and Analytics
+
+The user dashboard provides comprehensive usage analytics including real-time monitoring, cost tracking, performance metrics, and API usage patterns.
+
+### Team Management
+
+Enterprise and team accounts include role-based access control, shared API keys, centralized billing, and activity logging.
+
+## Developer Resources
+
+### Quick Start Guide
+
+Getting started with fal.ai takes just a few minutes:
+
+1. **Sign Up**: Create a free account at fal.ai
+2. **Get API Key**: Generate your API key from the dashboard
+3. **Install SDK**: Choose your preferred language SDK
+4. **Make First Request**: Generate your first image or video
+5. **Explore Models**: Browse the gallery and experiment
+
+### Best Practices
+
+**Performance Optimization**:
+1. Use appropriate model size for your use case
+2. Implement request caching where possible
+3. Consider using streaming endpoints for real-time applications
+4. Monitor usage patterns and optimize requests
+
+**Security Best Practices**:
+1. Store API keys securely (environment variables)
+2. Implement proper access controls
+3. Monitor API usage for anomalies
+4. Use HTTPS for all requests
+
+## Community and Support
+
+### Discord Community
+
+Join the fal.ai Discord server for real-time discussions, announcements, technical support, and project showcases.
+
+### GitHub Resources
+
+**Official Repositories**:
+- JavaScript/TypeScript SDK
+- Python SDK
+- Swift SDK
+- Sample implementations and tutorials
+
+### Technical Support
+
+**Support Channels**:
+- Documentation and guides (primary resource)
+- Discord community support
+- Email support for paid plans
+- Dedicated support for enterprise customers
+
+**Enterprise Support**:
+- 24/7 technical assistance
+- Dedicated customer success manager
+- Priority issue escalation
+- Custom integration support
+
+## Legal and Compliance
+
+### Terms of Service
+
+Key terms governing platform usage including acceptable use policies, content ownership and licensing, service availability, and billing terms.
+
+### Privacy Policy
+
+Data handling practices including information collection, data storage and security measures, third-party integrations, and user rights.
+
+### Security Measures
+
+**Platform Security**:
+- End-to-end encryption for all data
+- Regular security audits and penetration testing
+- SOC2 Type II compliance certification
+- GDPR and CCPA compliance
+
+**Data Protection**:
+- No training on customer data
+- Secure data storage and transmission
+- Regular backup and disaster recovery
+- Access controls and audit logging
+
+## Contact Information
+
+**Sales and Partnerships**:
+- Email: sales@fal.ai
+- Enterprise inquiries: enterprise@fal.ai
+
+**Technical Support**:
+- Documentation: docs.fal.ai
+- Community: Discord server
+- Enterprise support: support@fal.ai
+
+**General Inquiries**:
+- General questions: hello@fal.ai
+- Press and media: press@fal.ai
