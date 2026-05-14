@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>falaw.bridges.mcp &mdash; falaw 0.0.13 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=9fc46840"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            falaw
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw.html">falaw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/__main__.html">falaw.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/account.html">falaw.account</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/base.html">falaw.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/bridges.html">falaw.bridges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/bridges/mcp.html">falaw.bridges.mcp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/bridges/service.html">falaw.bridges.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/bridges/skill.html">falaw.bridges.skill</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/cache.html">falaw.cache</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/core.html">falaw.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/corpus.html">falaw.corpus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/cost.html">falaw.cost</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/errors.html">falaw.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/events.html">falaw.events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/journal.html">falaw.journal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/local.html">falaw.local</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations.html">falaw.operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations/_plan.html">falaw.operations._plan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations/audio.html">falaw.operations.audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations/avatar.html">falaw.operations.avatar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations/images.html">falaw.operations.images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations/llm.html">falaw.operations.llm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations/preproduction.html">falaw.operations.preproduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations/render.html">falaw.operations.render</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/operations/video.html">falaw.operations.video</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/plan.html">falaw.plan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/refresh.html">falaw.refresh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/registry.html">falaw.registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/results.html">falaw.results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/scene.html">falaw.scene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/falaw/session.html">falaw.session</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">falaw</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">falaw.bridges.mcp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for falaw.bridges.mcp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;MCP bridge: expose every falaw tool as an MCP tool.</span>
+
+<span class="sd">Like ``bridges/skill.py``, this is a thin adapter over</span>
+<span class="sd">``falaw.registry.list_tools()`` — adding a new falaw tool automatically adds</span>
+<span class="sd">an MCP tool, no edit here. Built on ``fastmcp`` (the federation&#39;s MCP library;</span>
+<span class="sd">see ``lookbook/mcp.py`` for the canonical pattern).</span>
+
+<span class="sd">Two entry points:</span>
+
+<span class="sd">- :func:`register_tools` — add falaw&#39;s tools to an *existing* ``FastMCP``</span>
+<span class="sd">  server. This is what an **aggregating** server (reelee&#39;s MCP server, which</span>
+<span class="sd">  composes falaw + nw + artful + lacing) calls.</span>
+<span class="sd">- :func:`build_mcp_server` — build a *standalone* ``FastMCP`` server exposing</span>
+<span class="sd">  just falaw. :func:`serve` runs it over stdio.</span>
+
+<span class="sd">``fastmcp`` is an optional dependency: ``pip install falaw[mcp]``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">fields</span><span class="p">,</span> <span class="n">is_dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_tools</span>
+
+<span class="n">_INSTRUCTIONS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;falaw generates and manages AI media (images, video, audio) via fal.ai. &quot;</span>
+    <span class="s2">&quot;Every tool is content-addressed and cached, so re-running an unchanged &quot;</span>
+    <span class="s2">&quot;call is free. Use the plan_* tools to inspect cost before spending.&quot;</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="register_tools">
+<a class="viewcode-back" href="../../../module_docs/falaw/bridges/mcp.html#falaw.bridges.mcp.register_tools">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_tools</span><span class="p">(</span>
+    <span class="n">server</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">tools</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register every falaw :class:`ToolSpec` on ``server`` (a ``FastMCP``).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        server: A ``fastmcp.FastMCP`` instance (or anything with a compatible</span>
+<span class="sd">            ``.tool(fn, *, name, description, tags)`` method).</span>
+<span class="sd">        tools: The tools to register; defaults to the whole falaw registry.</span>
+<span class="sd">        prefix: Optional name prefix (e.g. ``&quot;falaw_&quot;``) so an aggregating</span>
+<span class="sd">            server can namespace falaw&#39;s tools away from another package&#39;s.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The MCP tool names registered (in registry order).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tools</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tools</span> <span class="k">if</span> <span class="n">tools</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">list_tools</span><span class="p">())</span>
+    <span class="n">registered</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">tools</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">tool</span><span class="p">(</span>
+            <span class="n">_jsonable_tool</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">func</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="n">tags</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">tags</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">registered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">registered</span></div>
+
+
+
+<div class="viewcode-block" id="build_mcp_server">
+<a class="viewcode-back" href="../../../module_docs/falaw/bridges/mcp.html#falaw.bridges.mcp.build_mcp_server">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_mcp_server</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;falaw&quot;</span><span class="p">,</span>
+    <span class="n">tools</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">ToolSpec</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a standalone ``FastMCP`` server exposing every falaw tool.</span>
+
+<span class="sd">    Raises ``ImportError`` with an install hint if ``fastmcp`` is missing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastMCP</span>  <span class="c1"># type: ignore[import-not-found]</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The MCP bridge needs `fastmcp` — `pip install falaw[mcp]` &quot;</span>
+            <span class="s2">&quot;(or `pip install fastmcp`).&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+    <span class="n">server</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">instructions</span><span class="o">=</span><span class="n">_INSTRUCTIONS</span><span class="p">)</span>
+    <span class="n">register_tools</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">server</span></div>
+
+
+
+<div class="viewcode-block" id="serve">
+<a class="viewcode-back" href="../../../module_docs/falaw/bridges/mcp.html#falaw.bridges.mcp.serve">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">transport</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;stdio&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the standalone falaw MCP server.</span>
+
+<span class="sd">    stdio is the default transport — what Claude Desktop and the Anthropic SDK</span>
+<span class="sd">    expect when launching an MCP server as a subprocess.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">build_mcp_server</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Internals</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_jsonable_tool</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap a falaw tool so its return value is JSON-friendly for MCP.</span>
+
+<span class="sd">    falaw tools return rich objects (``Artifact``, ``Result``, ``Scene`` …).</span>
+<span class="sd">    MCP needs JSON-able results, so the wrapper coerces dataclasses and</span>
+<span class="sd">    pydantic models to plain dicts. ``functools.wraps`` preserves the</span>
+<span class="sd">    signature so ``fastmcp`` still derives the input schema from it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_jsonable</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_jsonable</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Best-effort coercion of a value to a JSON-serializable shape.</span>
+
+<span class="sd">    Recurses uniformly so nested dataclasses become dicts and tuples become</span>
+<span class="sd">    lists (JSON has no tuple type) — the result is predictable for a consumer</span>
+<span class="sd">    regardless of how deep falaw&#39;s return objects nest.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_dataclass</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">_jsonable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;model_dump&quot;</span><span class="p">):</span>  <span class="c1"># pydantic v2 model</span>
+        <span class="k">return</span> <span class="n">_jsonable</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_jsonable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_jsonable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">value</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
