@@ -427,15 +427,19 @@ def _default_artifact_converter(raw: dict, call: CallPlan):
     - ``{"video": {"url": ..., "content_type": ...}}``        — i2v / t2v / lipsync
     - ``{"audio": {"url": ..., "content_type": ...}}``        — TTS
     - ``{"audio_url": "..."}``                                — voice-clone
-    - ``{"output": "..."}`` (string)                          — some LLM endpoints
+    - ``{"output": "..."}`` (string)                          — LLM endpoints
 
     The first matching pattern wins. For multi-asset responses (e.g. flux
     with ``num_images > 1``), only the first asset becomes an Artifact —
     callers wanting all assets should provide their own converter.
 
-    The Artifact's ``asset_id`` is the SHA-256 of the URL (when present);
-    ``bytes_size`` is 0 because we don't download by default. Callers who
-    want byte-content addressing should download the asset and re-hash.
+    For media calls the Artifact's ``asset_id`` is the SHA-256 of the URL and
+    ``bytes_size`` is 0 (we don't download by default). For ``json`` / ``text``
+    calls with **no URL** — the ``fal-ai/any-llm`` case — the textual response
+    is *materialized* to a content-addressed file in the falaw cache and
+    ``Artifact.path`` points at it (``asset_id`` is the SHA-256 of the
+    content). So ``execute`` returns a usable Artifact regardless of kind:
+    media via ``url``, LLM output via ``path``.
     """
     from lacing import Artifact, hash_bytes
     from lacing.artifact import _now_rt
@@ -444,12 +448,21 @@ def _default_artifact_converter(raw: dict, call: CallPlan):
     url = _extract_first_url(raw)
     duration = _extract_duration_s(raw)
     mime = _extract_content_type(raw)
+    path = None
+    bytes_size = 0
 
-    # asset_id from URL when we don't have bytes — stable across re-runs of
-    # the same fal response. When bytes are downloaded later, callers should
-    # re-hash and produce a new Artifact.
     if url:
+        # asset_id from URL when we don't have bytes — stable across re-runs of
+        # the same fal response. When bytes are downloaded later, callers
+        # should re-hash and produce a new Artifact.
         fake_id = hash_bytes(url.encode("utf-8"))
+    elif call.output_kind in ("json", "text"):
+        # LLM-style response: no URL, the content *is* the text. Materialize
+        # it to a content-addressed cache file so the Artifact is usable.
+        content = _extract_text_content(raw)
+        path, fake_id = _materialize_text_to_cache(content, call.output_kind)
+        bytes_size = len(content.encode("utf-8"))
+        mime = mime or ("application/json" if call.output_kind == "json" else "text/plain")
     else:
         # Last-resort: hash the response itself.
         import json as _json
@@ -469,15 +482,60 @@ def _default_artifact_converter(raw: dict, call: CallPlan):
     return Artifact(
         asset_id=fake_id,
         kind=call.output_kind,
-        path=None,
+        path=path,
         url=url,
-        bytes_size=0,
+        bytes_size=bytes_size,
         duration_s=duration,
         mime=mime,
         provenance=prov,
         cost_usd=call.billable_cost_usd or None,
         producer_call_id=None,  # set by orchestrators that thread through call_id
     )
+
+
+def _extract_text_content(raw) -> str:
+    """Pull plain text out of an LLM response shape (any-llm / OpenAI-style).
+
+    Mirrors the extraction in ``falaw.operations.llm``; kept here so the
+    converter has no dependency on the operations layer.
+    """
+    if isinstance(raw, str):
+        return raw
+    if isinstance(raw, dict):
+        for key in ("output", "text", "response", "completion", "content"):
+            v = raw.get(key)
+            if isinstance(v, str) and v.strip():
+                return v
+        choices = raw.get("choices")
+        if isinstance(choices, list) and choices and isinstance(choices[0], dict):
+            msg = choices[0].get("message")
+            if isinstance(msg, dict) and isinstance(msg.get("content"), str):
+                return msg["content"]
+    return str(raw)
+
+
+def _materialize_text_to_cache(content: str, kind: str) -> tuple[str, str]:
+    """Write ``content`` to a content-addressed file in the falaw cache.
+
+    Returns ``(path, asset_id)`` where ``asset_id`` is the SHA-256 hex of the
+    content bytes. Idempotent: the same content writes the same file.
+    """
+    import os
+
+    from lacing import hash_bytes
+
+    from .cache import _cache_dir
+
+    data = content.encode("utf-8")
+    asset_id = hash_bytes(data)
+    ext = ".json" if kind == "json" else ".txt"
+    assets_dir = os.path.join(_cache_dir(), "assets")
+    os.makedirs(assets_dir, exist_ok=True)
+    path = os.path.join(assets_dir, f"llm-{asset_id}{ext}")
+    if not os.path.exists(path):
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+    return path, asset_id
 
 
 def _extract_first_url(raw: dict) -> Optional[str]:

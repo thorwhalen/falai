@@ -286,3 +286,57 @@ def plan_lipsync(
         metadata=metadata,
         consult_cache=consult_cache,
     )
+
+
+# ---------------------------------------------------------------------------
+# llm_complete  (the planning sibling of falaw.llm_complete)
+# ---------------------------------------------------------------------------
+
+
+def plan_llm_complete(
+    prompt: str,
+    *,
+    system: str = "",
+    model: Optional[str] = None,
+    temperature: float = 0.7,
+    output_kind: str = "text",
+    extra: Optional[dict] = None,
+    metadata: Optional[dict] = None,
+    consult_cache: bool = True,
+) -> CallPlan:
+    """Plan a :func:`falaw.llm_complete` call without executing it.
+
+    Routes through ``fal-ai/any-llm`` with the *exact same* application id and
+    argument shape as the eager :func:`falaw.llm_complete`, so a planned call
+    and an eager call with identical inputs collapse to the same cache entry.
+
+    ``output_kind`` is ``"text"`` for a free-form completion or ``"json"`` when
+    the prompt asks for a strict-JSON response — it tells :func:`falaw.execute`
+    what kind of :class:`lacing.Artifact` to materialize. Either way the LLM
+    response is materialized to a content-addressed cache *file*
+    (``Artifact.path``), because LLM output is text, not a URL.
+
+    Cost is the ``fal-ai/any-llm`` per-call estimate (``source="approximate"``
+    — real pricing is per-token); pass ``model`` to pick the underlying model.
+    """
+    from .llm import _DEFAULT_LLM, _DEFAULT_MODEL
+
+    application = _DEFAULT_LLM
+    record = get_model(application)
+    arguments: dict = {
+        "model": model or _DEFAULT_MODEL,
+        "prompt": prompt,
+        "temperature": temperature,
+    }
+    if system:
+        arguments["system_prompt"] = system
+    arguments.update(extra or {})
+    return make_call_plan(
+        tool="llm_complete",
+        application=application,
+        arguments=arguments,
+        output_kind=output_kind,  # type: ignore[arg-type]  # "text" | "json"
+        estimated_cost_usd=_estimate_cost_with_record(record),
+        metadata=metadata,
+        consult_cache=consult_cache,
+    )

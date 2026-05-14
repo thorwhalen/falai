@@ -41,4 +41,5 @@ from ._plan import (  # noqa: F401
     plan_generate_image,
     plan_image_to_video,
     plan_lipsync,
+    plan_llm_complete,
 )

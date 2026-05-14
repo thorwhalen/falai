@@ -386,7 +386,14 @@
     ],
     "quality_tier": "balanced",
     "cost_hint": "medium",
-    "docs_url": "https://fal.ai/models/fal-ai/any-llm"
+    "docs_url": "https://fal.ai/models/fal-ai/any-llm",
+    "cost_estimate": {
+      "kind": "per_call",
+      "amount": 0.01,
+      "currency": "USD",
+      "notes": "Approximate per-completion cost; true price is per-token and varies with the chosen model and prompt/response length. Reconcile against billing.",
+      "source": "approximate"
+    }
   },
   {
     "id": "fal-ai/any-llm/vision",
