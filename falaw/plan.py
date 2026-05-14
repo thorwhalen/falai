@@ -204,6 +204,89 @@ class Plan:
         return Plan(calls=tuple(new_calls))
 
 
+# --- serialization ----------------------------------------------------------
+
+PLAN_DICT_SCHEMA = "falaw.plan/v1"
+"""The ``schema`` tag :func:`plan_to_dict` writes and :func:`plan_from_dict`
+expects. Bumped only on a breaking change to the dict shape."""
+
+
+def call_plan_to_dict(call: CallPlan) -> dict:
+    """Convert a :class:`CallPlan` to a plain JSON-serializable dict.
+
+    The inverse of :func:`call_plan_from_dict`. ``expected_duration_s`` (a
+    ``tuple``) becomes a 2-element list since JSON has no tuple type;
+    everything else is already JSON-native.
+    """
+    return {
+        "tool": call.tool,
+        "application": call.application,
+        "arguments": call.arguments,
+        "output_kind": call.output_kind,
+        "estimated_cost_usd": call.estimated_cost_usd,
+        "cache_status": call.cache_status,
+        "expected_duration_s": (
+            list(call.expected_duration_s)
+            if call.expected_duration_s is not None
+            else None
+        ),
+        "metadata": call.metadata,
+    }
+
+
+def call_plan_from_dict(d: dict) -> CallPlan:
+    """Rebuild a :class:`CallPlan` from a :func:`call_plan_to_dict` dict.
+
+    ``arguments`` / ``metadata`` are copied (a deserialized plan owns its own
+    data); ``expected_duration_s`` is re-tupled.
+    """
+    duration = d.get("expected_duration_s")
+    return CallPlan(
+        tool=d["tool"],
+        application=d["application"],
+        arguments=dict(d["arguments"]),
+        output_kind=d["output_kind"],
+        estimated_cost_usd=d.get("estimated_cost_usd"),
+        cache_status=d.get("cache_status", "unknown"),
+        expected_duration_s=(
+            tuple(duration) if duration is not None else None
+        ),
+        metadata=dict(d.get("metadata") or {}),
+    )
+
+
+def plan_to_dict(plan: Plan) -> dict:
+    """Convert a :class:`Plan` to a plain JSON-serializable dict.
+
+    The result round-trips through :func:`plan_from_dict`. This is the
+    substrate primitive a consumer (a persistence layer, an MCP transport, a
+    plan-diff tool) builds on — falaw owns the wire shape of its own Plan so
+    every consumer agrees on it. Carries a ``schema`` tag (:data:`PLAN_DICT_SCHEMA`)
+    so a future breaking change is detectable.
+    """
+    return {
+        "schema": PLAN_DICT_SCHEMA,
+        "calls": [call_plan_to_dict(c) for c in plan.calls],
+    }
+
+
+def plan_from_dict(d: dict) -> Plan:
+    """Rebuild a :class:`Plan` from a :func:`plan_to_dict` dict.
+
+    Raises ``ValueError`` if ``d`` carries an unrecognized ``schema`` tag — a
+    plan written by an incompatible future version should fail loudly, not
+    silently lose calls. A missing ``schema`` is tolerated (treated as v1) so
+    hand-written plans stay easy.
+    """
+    schema = d.get("schema")
+    if schema is not None and schema != PLAN_DICT_SCHEMA:
+        raise ValueError(
+            f"Cannot deserialize Plan: unknown schema {schema!r} "
+            f"(this falaw understands {PLAN_DICT_SCHEMA!r})."
+        )
+    return Plan(calls=tuple(call_plan_from_dict(c) for c in d.get("calls", ())))
+
+
 # --- planning helpers -------------------------------------------------------
 
 
