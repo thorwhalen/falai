@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to falaw’s documentation! &mdash; falaw 0.0.11 documentation</title>
+  <title>Welcome to falaw’s documentation! &mdash; falaw 0.0.12 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0c446633"></script>
+      <script src="_static/documentation_options.js?v=3bbcec59"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -149,6 +149,8 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.cache_stats"><code class="docutils literal notranslate"><span class="pre">cache_stats()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.cached_call_fal"><code class="docutils literal notranslate"><span class="pre">cached_call_fal()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.call_fal"><code class="docutils literal notranslate"><span class="pre">call_fal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.call_plan_from_dict"><code class="docutils literal notranslate"><span class="pre">call_plan_from_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.call_plan_to_dict"><code class="docutils literal notranslate"><span class="pre">call_plan_to_dict()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.cast_character"><code class="docutils literal notranslate"><span class="pre">cast_character()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.cast_voice"><code class="docutils literal notranslate"><span class="pre">cast_voice()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.clear_subscribers"><code class="docutils literal notranslate"><span class="pre">clear_subscribers()</span></code></a></li>
@@ -172,10 +174,12 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_animate_face"><code class="docutils literal notranslate"><span class="pre">plan_animate_face()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_composite_character_in_environment"><code class="docutils literal notranslate"><span class="pre">plan_composite_character_in_environment()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_edit_image"><code class="docutils literal notranslate"><span class="pre">plan_edit_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_from_dict"><code class="docutils literal notranslate"><span class="pre">plan_from_dict()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_generate_image"><code class="docutils literal notranslate"><span class="pre">plan_generate_image()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_image_to_video"><code class="docutils literal notranslate"><span class="pre">plan_image_to_video()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_lipsync"><code class="docutils literal notranslate"><span class="pre">plan_lipsync()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_llm_complete"><code class="docutils literal notranslate"><span class="pre">plan_llm_complete()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.plan_to_dict"><code class="docutils literal notranslate"><span class="pre">plan_to_dict()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.refresh_full_docs"><code class="docutils literal notranslate"><span class="pre">refresh_full_docs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.refresh_llms"><code class="docutils literal notranslate"><span class="pre">refresh_llms()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw.html#falaw.refresh_models_from_corpus"><code class="docutils literal notranslate"><span class="pre">refresh_models_from_corpus()</span></code></a></li>
@@ -335,9 +339,14 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.CacheStatus"><code class="docutils literal notranslate"><span class="pre">CacheStatus</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.CallPlan"><code class="docutils literal notranslate"><span class="pre">CallPlan</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.OutputKind"><code class="docutils literal notranslate"><span class="pre">OutputKind</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.PLAN_DICT_SCHEMA"><code class="docutils literal notranslate"><span class="pre">PLAN_DICT_SCHEMA</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.Plan"><code class="docutils literal notranslate"><span class="pre">Plan</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.call_plan_from_dict"><code class="docutils literal notranslate"><span class="pre">call_plan_from_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.call_plan_to_dict"><code class="docutils literal notranslate"><span class="pre">call_plan_to_dict()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.execute"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.make_call_plan"><code class="docutils literal notranslate"><span class="pre">make_call_plan()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.plan_from_dict"><code class="docutils literal notranslate"><span class="pre">plan_from_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/falaw/plan.html#falaw.plan.plan_to_dict"><code class="docutils literal notranslate"><span class="pre">plan_to_dict()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/falaw/refresh.html">falaw.refresh</a><ul>
@@ -387,7 +396,7 @@
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p>Release: 0.0.11</p>
+<p>Release: 0.0.12</p>
 <p>Last change: May 14, 2026</p>
 </section>
 

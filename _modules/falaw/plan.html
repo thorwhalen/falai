@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>falaw.plan &mdash; falaw 0.0.11 documentation</title>
+  <title>falaw.plan &mdash; falaw 0.0.12 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=0c446633"></script>
+      <script src="../../_static/documentation_options.js?v=3bbcec59"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -319,6 +319,101 @@
 
 
 
+<span class="c1"># --- serialization ----------------------------------------------------------</span>
+
+<span class="n">PLAN_DICT_SCHEMA</span> <span class="o">=</span> <span class="s2">&quot;falaw.plan/v1&quot;</span>
+<span class="sd">&quot;&quot;&quot;The ``schema`` tag :func:`plan_to_dict` writes and :func:`plan_from_dict`</span>
+<span class="sd">expects. Bumped only on a breaking change to the dict shape.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="call_plan_to_dict">
+<a class="viewcode-back" href="../../module_docs/falaw/plan.html#falaw.call_plan_to_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">call_plan_to_dict</span><span class="p">(</span><span class="n">call</span><span class="p">:</span> <span class="n">CallPlan</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a :class:`CallPlan` to a plain JSON-serializable dict.</span>
+
+<span class="sd">    The inverse of :func:`call_plan_from_dict`. ``expected_duration_s`` (a</span>
+<span class="sd">    ``tuple``) becomes a 2-element list since JSON has no tuple type;</span>
+<span class="sd">    everything else is already JSON-native.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="n">call</span><span class="o">.</span><span class="n">tool</span><span class="p">,</span>
+        <span class="s2">&quot;application&quot;</span><span class="p">:</span> <span class="n">call</span><span class="o">.</span><span class="n">application</span><span class="p">,</span>
+        <span class="s2">&quot;arguments&quot;</span><span class="p">:</span> <span class="n">call</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span>
+        <span class="s2">&quot;output_kind&quot;</span><span class="p">:</span> <span class="n">call</span><span class="o">.</span><span class="n">output_kind</span><span class="p">,</span>
+        <span class="s2">&quot;estimated_cost_usd&quot;</span><span class="p">:</span> <span class="n">call</span><span class="o">.</span><span class="n">estimated_cost_usd</span><span class="p">,</span>
+        <span class="s2">&quot;cache_status&quot;</span><span class="p">:</span> <span class="n">call</span><span class="o">.</span><span class="n">cache_status</span><span class="p">,</span>
+        <span class="s2">&quot;expected_duration_s&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">call</span><span class="o">.</span><span class="n">expected_duration_s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">call</span><span class="o">.</span><span class="n">expected_duration_s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">call</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="call_plan_from_dict">
+<a class="viewcode-back" href="../../module_docs/falaw/plan.html#falaw.call_plan_from_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">call_plan_from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CallPlan</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rebuild a :class:`CallPlan` from a :func:`call_plan_to_dict` dict.</span>
+
+<span class="sd">    ``arguments`` / ``metadata`` are copied (a deserialized plan owns its own</span>
+<span class="sd">    data); ``expected_duration_s`` is re-tupled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;expected_duration_s&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">CallPlan</span><span class="p">(</span>
+        <span class="n">tool</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;tool&quot;</span><span class="p">],</span>
+        <span class="n">application</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;application&quot;</span><span class="p">],</span>
+        <span class="n">arguments</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;arguments&quot;</span><span class="p">]),</span>
+        <span class="n">output_kind</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;output_kind&quot;</span><span class="p">],</span>
+        <span class="n">estimated_cost_usd</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;estimated_cost_usd&quot;</span><span class="p">),</span>
+        <span class="n">cache_status</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cache_status&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">),</span>
+        <span class="n">expected_duration_s</span><span class="o">=</span><span class="p">(</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">),</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plan_to_dict">
+<a class="viewcode-back" href="../../module_docs/falaw/plan.html#falaw.plan_to_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plan_to_dict</span><span class="p">(</span><span class="n">plan</span><span class="p">:</span> <span class="n">Plan</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a :class:`Plan` to a plain JSON-serializable dict.</span>
+
+<span class="sd">    The result round-trips through :func:`plan_from_dict`. This is the</span>
+<span class="sd">    substrate primitive a consumer (a persistence layer, an MCP transport, a</span>
+<span class="sd">    plan-diff tool) builds on — falaw owns the wire shape of its own Plan so</span>
+<span class="sd">    every consumer agrees on it. Carries a ``schema`` tag (:data:`PLAN_DICT_SCHEMA`)</span>
+<span class="sd">    so a future breaking change is detectable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="n">PLAN_DICT_SCHEMA</span><span class="p">,</span>
+        <span class="s2">&quot;calls&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">call_plan_to_dict</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">calls</span><span class="p">],</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="plan_from_dict">
+<a class="viewcode-back" href="../../module_docs/falaw/plan.html#falaw.plan_from_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plan_from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Plan</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rebuild a :class:`Plan` from a :func:`plan_to_dict` dict.</span>
+
+<span class="sd">    Raises ``ValueError`` if ``d`` carries an unrecognized ``schema`` tag — a</span>
+<span class="sd">    plan written by an incompatible future version should fail loudly, not</span>
+<span class="sd">    silently lose calls. A missing ``schema`` is tolerated (treated as v1) so</span>
+<span class="sd">    hand-written plans stay easy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;schema&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">schema</span> <span class="o">!=</span> <span class="n">PLAN_DICT_SCHEMA</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot deserialize Plan: unknown schema </span><span class="si">{</span><span class="n">schema</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(this falaw understands </span><span class="si">{</span><span class="n">PLAN_DICT_SCHEMA</span><span class="si">!r}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">Plan</span><span class="p">(</span><span class="n">calls</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">call_plan_from_dict</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;calls&quot;</span><span class="p">,</span> <span class="p">())))</span></div>
+
+
+
 <span class="c1"># --- planning helpers -------------------------------------------------------</span>
 
 
@@ -583,7 +678,9 @@
         <span class="n">content</span> <span class="o">=</span> <span class="n">_extract_text_content</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
         <span class="n">path</span><span class="p">,</span> <span class="n">fake_id</span> <span class="o">=</span> <span class="n">_materialize_text_to_cache</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">call</span><span class="o">.</span><span class="n">output_kind</span><span class="p">)</span>
         <span class="n">bytes_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
-        <span class="n">mime</span> <span class="o">=</span> <span class="n">mime</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;application/json&quot;</span> <span class="k">if</span> <span class="n">call</span><span class="o">.</span><span class="n">output_kind</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span> <span class="k">else</span> <span class="s2">&quot;text/plain&quot;</span><span class="p">)</span>
+        <span class="n">mime</span> <span class="o">=</span> <span class="n">mime</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="s2">&quot;application/json&quot;</span> <span class="k">if</span> <span class="n">call</span><span class="o">.</span><span class="n">output_kind</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span> <span class="k">else</span> <span class="s2">&quot;text/plain&quot;</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Last-resort: hash the response itself.</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_json</span>
