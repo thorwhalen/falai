@@ -197,6 +197,44 @@ def test_plan_image_to_video_uses_per_call_cost_for_hailuo(monkeypatch):
     assert p.estimated_cost_usd == pytest.approx(0.50)
 
 
+def test_plan_text_to_speech_builds_tts_call():
+    """plan_text_to_speech mirrors plan_lipsync's shape — tool, application,
+    arguments, output_kind. Picks a TTS model by quality tier."""
+    from falaw import plan_text_to_speech
+
+    p = plan_text_to_speech(text="Hello world", quality="balanced")
+    assert p.tool == "text_to_speech"
+    assert p.output_kind == "audio"
+    assert p.arguments["text"] == "Hello world"
+    assert "voice" not in p.arguments  # omitted when not passed
+    assert p.application  # some TTS model resolved
+
+
+def test_plan_text_to_speech_threads_voice_and_extra():
+    from falaw import plan_text_to_speech
+
+    p = plan_text_to_speech(
+        text="Salut",
+        voice="fr-FR-female-1",
+        extra={"stability": 0.5},
+        metadata={"panel_id": "p01"},
+    )
+    assert p.arguments["text"] == "Salut"
+    assert p.arguments["voice"] == "fr-FR-female-1"
+    assert p.arguments["stability"] == 0.5
+    assert p.metadata == {"panel_id": "p01"}
+
+
+def test_plan_text_to_speech_pins_explicit_model_id():
+    from falaw import plan_text_to_speech
+
+    p = plan_text_to_speech(
+        text="x",
+        model_id="fal-ai/elevenlabs/tts/multilingual-v2",
+    )
+    assert p.application == "fal-ai/elevenlabs/tts/multilingual-v2"
+
+
 def test_full_plan_with_metadata_threading(monkeypatch):
     """Metadata propagates from CallPlan to executed Artifact's
     producer_call_id-adjacent fields. (Today we attach it via the converter

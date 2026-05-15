@@ -289,6 +289,51 @@ def plan_lipsync(
 
 
 # ---------------------------------------------------------------------------
+# text_to_speech (TTS: text → audio Artifact)
+# ---------------------------------------------------------------------------
+
+
+def plan_text_to_speech(
+    text: str,
+    *,
+    quality: str = "balanced",
+    voice: Optional[str] = None,
+    model_id: Optional[str] = None,
+    duration_s: Optional[float] = None,
+    extra: Optional[dict] = None,
+    metadata: Optional[dict] = None,
+    consult_cache: bool = True,
+) -> CallPlan:
+    """Plan a :func:`falaw.text_to_speech` call (text → audio Artifact).
+
+    Mirrors the eager :func:`falaw.text_to_speech` signature so a planned
+    call and an eager call with identical inputs collapse to the same
+    cache entry. ``voice`` semantics are model-specific.
+
+    ``duration_s`` is an *optional* hint used only by the cost estimator
+    — the produced audio's actual duration comes back on the materialized
+    Artifact.
+    """
+    application, record = _resolve_model_id_and_record(
+        model_id=model_id, category="tts", quality_tier=quality
+    )
+    arguments: dict = {"text": text}
+    if voice:
+        arguments["voice"] = voice
+    if extra:
+        arguments.update(extra)
+    return make_call_plan(
+        tool="text_to_speech",
+        application=application,
+        arguments=arguments,
+        output_kind="audio",
+        estimated_cost_usd=_estimate_cost_with_record(record, seconds=duration_s),
+        metadata=metadata,
+        consult_cache=consult_cache,
+    )
+
+
+# ---------------------------------------------------------------------------
 # llm_complete  (the planning sibling of falaw.llm_complete)
 # ---------------------------------------------------------------------------
 
